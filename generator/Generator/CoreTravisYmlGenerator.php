@@ -1,0 +1,26 @@
+<?php
+/**
+ * Piwik - free/libre analytics platform
+ *
+ * @link http://piwik.org
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
+ */
+
+namespace Piwik\TravisScripts\Generator;
+
+use Piwik\TravisScripts\Generator;
+
+class CoreTravisYmlGenerator extends Generator
+{
+    protected function configureView()
+    {
+        parent::configureView();
+
+        $this->view->setGenerationMode('core');
+    }
+
+    public function getTravisYmlOutputPath()
+    {
+        return $this->getPiwikRootDir() . '/.travis.yml';
+    }
+}
