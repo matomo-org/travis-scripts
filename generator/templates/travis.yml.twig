@@ -103,8 +103,6 @@ install:
 {% endif %}
 {% if generationMode == 'plugin' or generationMode == 'piwik-tests-plugins' %}
   - ./tests/travis/checkout_test_against_branch.sh
-  - git submodule init -q
-  - git submodule update -q || true
 {% endif %}
 
   # travis now complains about this failing 9 times out of 10, so removing it

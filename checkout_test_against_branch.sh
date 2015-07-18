@@ -1,4 +1,5 @@
 #!/bin/bash
+# NOTE: this script is executed with Piwik master checked out. After it is run, Piwik master may not be checked out.
 
 SCRIPT_DIR=`dirname $0`
 
@@ -26,3 +27,24 @@ fi
 
 echo "Testing against '$TEST_AGAINST_PIWIK_BRANCH'"
 git checkout "$TEST_AGAINST_PIWIK_BRANCH"
+
+echo "Initializing submodules"
+git submodule init -q
+git submodule update -q || true
+
+echo "Making sure travis-scripts submodule is being used"
+if [ ! -d ./tests/travis/.git ]; then
+    echo "Older Piwik w/o travis-scripts submodule, checking out."
+
+    rm -rf ./tests/travis
+
+    git clone https://github.com/piwik/travis-scripts.git ./tests/travis
+fi
+
+cd tests/travis
+
+if git rev-parse --verify "$TEST_AGAINST_PIWIK_BRANCH" ; then
+    echo "Found travis-scripts branch or tag corresponding to TEST_AGAINST_PIWIK_BRANCH environment variable, checking out '$TEST_AGAINST_PIWIK_BRANCH' for tests."
+
+    git checkout "$TEST_AGAINST_PIWIK_BRANCH"
+fi
