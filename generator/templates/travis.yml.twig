@@ -98,14 +98,18 @@ install:
   - git clone -q https://github.com/piwik/piwik.git piwik
   - cd piwik
   - git fetch -q --all
-  # maybe travis-scripts repo is latest for initial travis setup
+  # make sure travis-scripts repo is latest for initial travis setup
   - '[ -d ./tests/travis/.git ] || sh -c "rm -rf ./tests/travis && git clone https://github.com/piwik/travis-scripts.git ./tests/travis"'
   - cd ./tests/travis ; git checkout master ; cd ../..
 
 {% else %}
   - git fetch -q
 {% endif %}
+
+  - export GENERATE_TRAVIS_YML_COMMAND="{{ consoleCommand|raw }}"
+  - '[[ "$TRAVIS_JOB_NUMBER" != *.1 || "$TRAVIS_PULL_REQUEST" != "false" ]] || ./tests/travis/autoupdate_travis_yml.sh'
 {% if generationMode == 'plugin' or generationMode == 'piwik-tests-plugins' %}
+
   - ./tests/travis/checkout_test_against_branch.sh
 {% endif %}
 
@@ -122,9 +126,6 @@ install:
   - mv ../$PLUGIN_NAME plugins
 
 {% endif %}
-  - export GENERATE_TRAVIS_YML_COMMAND="{{ consoleCommand|raw }}"
-  - '[[ "$TRAVIS_JOB_NUMBER" != *.1 || "$TRAVIS_PULL_REQUEST" != "false" ]] || ./tests/travis/autoupdate_travis_yml.sh'
-
 {% if generationMode == 'plugin' or generationMode == 'piwik-tests-plugins' %}
   # clone dependent repos
   - ./tests/travis/checkout_dependent_plugins.sh
