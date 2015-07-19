@@ -72,9 +72,7 @@ before_install:
 {% endif %}
   # do not use the Zend allocator on PHP 5.3 since it will randomly segfault after program execution
   - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && export USE_ZEND_ALLOC=0 || true'
-
-  - ./tests/travis/configure_git.sh
-{% if customTravisBuildSteps.before_install.after|default is not empty %}
+]{% if customTravisBuildSteps.before_install.after|default is not empty %}
 
 {{ customTravisBuildSteps.before_install.after|raw }}
 {% endif %}
@@ -106,6 +104,8 @@ install:
 {% if generationMode == 'plugin' or generationMode == 'piwik-tests-plugins' %}
   - ./tests/travis/checkout_test_against_branch.sh
 {% endif %}
+
+  - ./tests/travis/configure_git.sh
 
   # travis now complains about this failing 9 times out of 10, so removing it
   #- travis_retry composer self-update
