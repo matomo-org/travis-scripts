@@ -122,6 +122,10 @@ class PluginTravisYmlGenerator extends Generator
 
     private function folderContains($folderPath, $filePattern)
     {
+        if (!is_dir($folderPath)) {
+            return false;
+        }
+
         $directoryIterator = new \RecursiveDirectoryIterator($folderPath);
         $flatIterator = new \RecursiveIteratorIterator($directoryIterator);
         $fileIterator = new \RegexIterator($flatIterator, $filePattern, \RegexIterator::GET_MATCH);
