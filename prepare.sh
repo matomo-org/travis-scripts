@@ -42,14 +42,14 @@ then
 fi
 
 # Create tmp/ sub-directories
-mkdir ./tmp/assets
-mkdir ./tmp/cache
-mkdir ./tmp/latest
-mkdir ./tmp/logs
-mkdir ./tmp/sessions
-mkdir ./tmp/templates_c
-mkdir ./tmp/tcpdf
-mkdir ./tmp/climulti
+mkdir -p ./tmp/assets
+mkdir -p ./tmp/cache
+mkdir -p ./tmp/latest
+mkdir -p ./tmp/logs
+mkdir -p ./tmp/sessions
+mkdir -p ./tmp/templates_c
+mkdir -p ./tmp/tcpdf
+mkdir -p ./tmp/climulti
 chmod a+rw ./tests/lib/geoip-files || true
 chmod a+rw ./plugins/*/tests/System/processed || true
 chmod a+rw ./plugins/*/tests/Integration/processed || true
