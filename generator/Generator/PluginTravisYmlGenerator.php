@@ -105,7 +105,7 @@ class PluginTravisYmlGenerator extends Generator
 
     private function doesFolderContainPluginTests($folderPath)
     {
-        return $this->folderContains($folderPath, '.*Test\.php');
+        return $this->folderContains($folderPath, '/.*Test\.php/');
     }
 
     private function isTargetPluginContainsUITests()
@@ -117,7 +117,7 @@ class PluginTravisYmlGenerator extends Generator
 
     private function doesFolderContainUITests($folderPath)
     {
-        return $this->folderContains($folderPath, '.*_spec\.js');
+        return $this->folderContains($folderPath, '/.*_spec\.js/');
     }
 
     private function folderContains($folderPath, $filePattern)
