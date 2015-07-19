@@ -116,6 +116,9 @@ install:
   - mv ../$PLUGIN_NAME plugins
 
 {% endif %}
+  - export GENERATE_TRAVIS_YML_COMMAND="{{ consoleCommand|raw }}"
+  - '[[ "$TRAVIS_JOB_NUMBER" != *.1 || "$TRAVIS_PULL_REQUEST" != "false" ]] || ./tests/travis/autoupdate_travis_yml.sh'
+
 {% if generationMode == 'plugin' or generationMode == 'piwik-tests-plugins' %}
   # clone dependent repos
   - ./tests/travis/checkout_dependent_plugins.sh
@@ -162,9 +165,6 @@ before_script:
 
   - ./tests/travis/prepare.sh
   - ./tests/travis/setup_webserver.sh
-
-  - export GENERATE_TRAVIS_YML_COMMAND="{{ consoleCommand|raw }}"
-  - '[[ "$TRAVIS_JOB_NUMBER" != *.1 || "$TRAVIS_PULL_REQUEST" != "false" ]] || ./tests/travis/autoupdate_travis_yml.sh'
 
   - cd {{ travisShCwd }}
 {% if customTravisBuildSteps.before_script.after|default is not empty %}
