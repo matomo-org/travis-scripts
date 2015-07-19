@@ -26,7 +26,11 @@ if [ "$TEST_AGAINST_PIWIK_BRANCH" == "" ]; then
 fi
 
 echo "Testing against '$TEST_AGAINST_PIWIK_BRANCH'"
-git checkout "$TEST_AGAINST_PIWIK_BRANCH"
+rm -rf ./tests/travis
+git reset --hard
+if ! git checkout "$TEST_AGAINST_PIWIK_BRANCH"; then
+    exit 1
+fi
 
 echo "Initializing submodules"
 git submodule init -q
@@ -38,7 +42,9 @@ if [ ! -d ./tests/travis/.git ]; then
 
     rm -rf ./tests/travis
 
-    git clone https://github.com/piwik/travis-scripts.git ./tests/travis
+    if ! git clone https://github.com/piwik/travis-scripts.git ./tests/travis; then
+        exit 1
+    fi
 fi
 
 cd tests/travis
