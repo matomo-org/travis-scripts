@@ -72,6 +72,8 @@ before_install:
 {% endif %}
   # do not use the Zend allocator on PHP 5.3 since it will randomly segfault after program execution
   - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && export USE_ZEND_ALLOC=0 || true'
+
+  - ./tests/travis/configure_git.sh
 {% if customTravisBuildSteps.before_install.after|default is not empty %}
 
 {{ customTravisBuildSteps.before_install.after|raw }}
@@ -139,8 +141,6 @@ before_script:
 
   # disable opcache to avoid random failures on travis
   - echo "opcache.enable=0" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-
-  - ./tests/travis/configure_git.sh
 
   # print out mysql information
   - mysql --version
