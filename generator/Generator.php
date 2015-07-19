@@ -141,7 +141,7 @@ abstract class Generator
 
     protected function getExecutedConsoleCommandForTravis()
     {
-        $command = "php ./console " . GenerateTravisYmlFile::COMMAND_NAME;
+        $command = "php ./tests/travis/generator/main.php " . GenerateTravisYmlFile::COMMAND_NAME;
 
         $options = $this->getOptionsForSelfReferentialCommand();
 
