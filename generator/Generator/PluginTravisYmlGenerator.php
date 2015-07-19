@@ -129,6 +129,7 @@ class PluginTravisYmlGenerator extends Generator
         $directoryIterator = new \RecursiveDirectoryIterator($folderPath);
         $flatIterator = new \RecursiveIteratorIterator($directoryIterator);
         $fileIterator = new \RegexIterator($flatIterator, $filePattern, \RegexIterator::GET_MATCH);
+        $fileIterator->rewind();
 
         return $fileIterator->valid();
     }
