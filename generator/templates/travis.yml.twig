@@ -97,7 +97,9 @@ before_install:
   - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && export USE_ZEND_ALLOC=0 || true'
 {% if customTravisBuildSteps.before_install.after|default is not empty %}
 
-  {{ customTravisBuildSteps.before_install.after|indent(2)|raw }}{% endif %}
+    {{ customTravisBuildSteps.before_install.after|indent(2)|raw }}
+{% endif %}
+  - ./tests/travis/install_git_lfs.sh
 
 install:
 {% if customTravisBuildSteps.install.before|default is not empty %}  {{ customTravisBuildSteps.install.before|indent(2)|raw }}
