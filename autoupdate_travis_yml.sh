@@ -1,8 +1,11 @@
 #!/bin/bash
 
+# This script is executed before the plugin files are copied to the plugins directory and is executed on
+# the Piwik master branch.
+
 if [ "$REPO_ROOT_DIR" == "" ]; then
     if [ "$PLUGIN_NAME" != "" ]; then
-        REPO_ROOT_DIR="$TRAVIS_BUILD_DIR/$PLUGIN_NAME"
+        REPO_ROOT_DIR="$PIWIK_ROOT_DIR/$PLUGIN_NAME"
     else
         REPO_ROOT_DIR="$PIWIK_ROOT_DIR"
     fi
