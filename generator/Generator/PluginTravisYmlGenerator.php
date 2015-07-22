@@ -31,7 +31,7 @@ class PluginTravisYmlGenerator extends Generator
         $cwd = getcwd();
 
         // change dir to target plugin since plugin will be in its own git repo
-        chdir($this->getPluginRootFolder());
+        chdir($this->getRepoRootDir());
 
         try {
             $result = parent::travisEncrypt($data);
@@ -48,12 +48,12 @@ class PluginTravisYmlGenerator extends Generator
 
     public function getTravisYmlOutputPath()
     {
-        return $this->getPluginRootFolder() . "/.travis.yml";
+        return $this->getRepoRootDir() . "/.travis.yml";
     }
 
-    public function getPluginRootFolder()
+    public function getRepoRootDir()
     {
-        return $this->getPiwikRootDir() . "/plugins/{$this->targetPlugin}";
+        return $this->repoRootDirOverride ?: ($this->getPiwikRootDir() . "/plugins/{$this->targetPlugin}");
     }
 
     protected function configureView()
@@ -62,7 +62,7 @@ class PluginTravisYmlGenerator extends Generator
 
         $this->view->setGenerationMode('plugin');
         $this->view->setPlugin($this->targetPlugin);
-        $this->view->setPathToCustomTravisStepsFiles($this->getPluginRootFolder() . "/tests/travis");
+        $this->view->setPathToCustomTravisStepsFiles($this->getRepoRootDir() . "/tests/travis");
         $this->view->setLatestStableVersion($this->getLatestStableVersion());
 
         $testsToRun = array();
@@ -98,7 +98,7 @@ class PluginTravisYmlGenerator extends Generator
 
     private function isTargetPluginContainsPluginTests()
     {
-        $pluginPath = $this->getPluginRootFolder();
+        $pluginPath = $this->getRepoRootDir();
         return $this->doesFolderContainPluginTests($pluginPath . "/tests")
         || $this->doesFolderContainPluginTests($pluginPath . "/Test");
     }
@@ -110,7 +110,7 @@ class PluginTravisYmlGenerator extends Generator
 
     private function isTargetPluginContainsUITests()
     {
-        $pluginPath = $this->getPluginRootFolder();
+        $pluginPath = $this->getRepoRootDir();
         return $this->doesFolderContainUITests($pluginPath . "/tests")
             || $this->doesFolderContainUITests($pluginPath . "/Test");
     }

@@ -31,6 +31,11 @@ abstract class Generator
     protected $view;
 
     /**
+     * @var string
+     */
+    protected $repoRootDirOverride = null;
+
+    /**
      * Constructor.
      *
      * @param string[] $options The string options applied to the generate:travis-yml command.
@@ -39,6 +44,7 @@ abstract class Generator
     {
         $this->options = $options;
         $this->output = $output;
+        $this->repoRootDirOverride = @$options['repo-root-dir'];
 
         $this->view = new TravisYmlView();
     }
@@ -194,6 +200,7 @@ abstract class Generator
         unset($options['github-token']);
         unset($options['artifacts-pass']);
         unset($options['dump']);
+        unset($options['repo-root-dir']);
         $options['verbose'] = true;
         return $options;
     }

@@ -98,10 +98,6 @@ install:
   # make sure travis-scripts repo is latest for initial travis setup
   - '[ -d ./tests/travis/.git ] || sh -c "rm -rf ./tests/travis && git clone https://github.com/piwik/travis-scripts.git ./tests/travis"'
   - cd ./tests/travis ; git checkout master ; cd ../..
-
-  # move plugin contents to folder in the plugins subdirectory
-  - rm -rf plugins/$PLUGIN_NAME
-  - mv ../$PLUGIN_NAME plugins
 {% else %}
   - git fetch -q
 {% endif %}
@@ -125,6 +121,12 @@ install:
 
   - '[ "$SKIP_COMPOSER_INSTALL" == "1" ] || travis_retry composer install'
 
+{% if generationMode == 'plugin' %}
+  # move plugin contents to folder in the plugins subdirectory
+  - rm -rf plugins/$PLUGIN_NAME
+  - mv ../$PLUGIN_NAME plugins
+
+{% endif %}
 {% if generationMode == 'plugin' or generationMode == 'piwik-tests-plugins' %}
   # clone dependent repos
   - ./tests/travis/checkout_dependent_plugins.sh

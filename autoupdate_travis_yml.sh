@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# This script is executed after the plugin files are copied to the plugins directory and is executed on
+# This script is executed before the plugin files are copied to the plugins directory and is executed on
 # the Piwik master branch.
 
 if [ "$REPO_ROOT_DIR" == "" ]; then
     if [ "$PLUGIN_NAME" != "" ]; then
-        REPO_ROOT_DIR="$PIWIK_ROOT_DIR/plugins/$PLUGIN_NAME"
+        REPO_ROOT_DIR="$REPO_ROOT_DIR/$PLUGIN_NAME"
     else
         REPO_ROOT_DIR="$PIWIK_ROOT_DIR"
     fi
@@ -43,7 +43,7 @@ fi
 
 # check if .travis.yml is out of date. if github token is supplied we will try to auto-update,
 # otherwise we just print a message and exit.
-if ! bash -c "$GENERATE_TRAVIS_YML_COMMAND -v --dump=./generated.travis.yml"; then
+if ! bash -c "$GENERATE_TRAVIS_YML_COMMAND -v --dump=./generated.travis.yml --repo-root-dir='$REPO_ROOT_DIR'"; then
     echo "generate:travis-yml failed!"
     exit 1
 fi
