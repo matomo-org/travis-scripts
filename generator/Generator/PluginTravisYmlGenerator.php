@@ -136,7 +136,8 @@ class PluginTravisYmlGenerator extends Generator
 
     private function getLatestStableVersion()
     {
-        shell_exec("cd '" . $this->getPiwikRootDir() . "' && git fetch --tags");
+        $this->log("info", "Executing git fetch to find latest stable...");
+        shell_exec("cd '" . $this->getPiwikRootDir() . "' && git fetch origin 'refs/tags/*:refs/tags/*'");
 
         $tags = shell_exec("cd '" . $this->getPiwikRootDir() . "' && git tag -l ");
         $tags = explode("\n", $tags);
