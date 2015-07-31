@@ -14,21 +14,16 @@ then
 else
     if [ "$TEST_SUITE" = "UITests" ];
     then
-        branch_name="$TRAVIS_BRANCH"
-        url_base="http://builds-artifacts.piwik.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&build_id=$TRAVIS_BUILD_NUMBER"
+        url_base="http://builds-artifacts.piwik.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&build_id=$TRAVIS_BUILD_NUMBER&branch=$TRAVIS_BRANCH"
 
         if [ -n "$PLUGIN_NAME" ];
         then
-            branch_name="$branch_name.$PLUGIN_NAME"
-
             if [ "$UNPROTECTED_ARTIFACTS" = "" ];
             then
                 url_base="$url_base&protected=1"
                 using_protected=1
             fi
         fi
-
-        url_base="$url_base&branch=$branch_name"
 
         echo "Uploading artifacts for $TEST_SUITE..."
 
