@@ -14,8 +14,7 @@ sudo apt-get install -qq xmlstarlet > /dev/null
 # Install fonts for UI tests
 if [ "$TEST_SUITE" = "UITests" ];
 then
-    sudo sh -c "echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections"
-    sudo apt-get install -qq ttf-mscorefonts-installer > /dev/null
+    sudo cp ./tests/travis/fonts/* /usr/share/fonts/
 fi
 
 # Copy Piwik configuration

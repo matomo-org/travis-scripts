@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This script is executed before the plugin files are copied to the plugins directory and is executed on
+# the Piwik master branch.
+
 if [ "$REPO_ROOT_DIR" == "" ]; then
     if [ "$PLUGIN_NAME" != "" ]; then
         REPO_ROOT_DIR="$TRAVIS_BUILD_DIR/$PLUGIN_NAME"
@@ -38,15 +41,9 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] || [[ "$TRAVIS_JOB_NUMBER" != *.1 ]]; t
     exit;
 fi
 
-# if the generate:travis-yml command doesn't exist for some reason, abort auto-update w/o failing build
-if ! bash -c "$PIWIK_ROOT_DIR/console help generate:travis-yml" > /dev/null; then
-    echo "The generate:travis-yml command does not exist in this Piwik, aborting auto-update."
-    exit;
-fi
-
 # check if .travis.yml is out of date. if github token is supplied we will try to auto-update,
 # otherwise we just print a message and exit.
-if ! bash -c "$GENERATE_TRAVIS_YML_COMMAND -v --dump=./generated.travis.yml"; then
+if ! bash -c "$GENERATE_TRAVIS_YML_COMMAND -v --dump=./generated.travis.yml --repo-root-dir='$REPO_ROOT_DIR'"; then
     echo "generate:travis-yml failed!"
     exit 1
 fi

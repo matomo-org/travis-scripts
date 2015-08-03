@@ -21,6 +21,11 @@ class CoreTravisYmlGenerator extends Generator
 
     public function getTravisYmlOutputPath()
     {
-        return $this->getPiwikRootDir() . '/.travis.yml';
+        return $this->getRepoRootDir() . '/.travis.yml';
+    }
+
+    private function getRepoRootDir()
+    {
+        return $this->repoRootDirOverride ?: $this->getPiwikRootDir();
     }
 }
