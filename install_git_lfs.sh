@@ -17,8 +17,7 @@ then
     # We overwrite the shebang of the file waiting for a new git-lfs release which
     # contains https://github.com/github/git-lfs/commit/dbf09f71735e0456c7a707bba634016f66dfb1f7
     # TODO remove once a version > 0.5.4 is released
-    var="#!/usr/bin/env bash"
-    sed "1s/.*/$var/" install.sh
+    sed "1s/.*/\#\!\/usr\/bin\/env bash/" install.sh > install.sh
     cat install.sh
 
     sudo ./install.sh
