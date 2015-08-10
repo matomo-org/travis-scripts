@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Install git lfs for UI tests screenshots
 # TODO: remove/update when Travis updates the VM (should be installed by default)
 if [ "$TEST_SUITE" = "UITests" ];
