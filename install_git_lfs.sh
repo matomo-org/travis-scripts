@@ -9,7 +9,7 @@ then
     # TODO remove the $GITHUB_USER_TOKEN once v0.6.0 is released
     git remote set-url origin "https://$GITHUB_USER_TOKEN:@github.com/$TRAVIS_REPO_SLUG.git"
 
-    curl -sLo - https://github.com/github/git-lfs/releases/download/v0.5.3/git-lfs-linux-amd64-0.5.3.tar.gz | tar xzvf -
+    curl -sLo - https://github.com/github/git-lfs/releases/download/v0.5.4/git-lfs-linux-amd64-0.5.4.tar.gz | tar xzvf -
     cd git-lfs-*
 
     sudo ./install.sh
