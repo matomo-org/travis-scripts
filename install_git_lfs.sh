@@ -8,7 +8,9 @@ if [ "$TEST_SUITE" = "UITests" ];
 then
 
     # It seems to be necessary to create this directory else some builds fail
-    mkdir -p /usr/local/bin
+    sudo mkdir -p /usr/local/bin
+    ls -la /usr/local/bin
+    echo $PATH
 
     # Change the remote because git lfs doesn't support git:// URLs
     # TODO remove the $GITHUB_USER_TOKEN once v0.6.0 is released
