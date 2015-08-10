@@ -7,6 +7,9 @@ set -e
 if [ "$TEST_SUITE" = "UITests" ];
 then
 
+    # It seems to be necessary to create this directory else some builds fail
+    mkdir -p /usr/local/bin
+
     # Change the remote because git lfs doesn't support git:// URLs
     # TODO remove the $GITHUB_USER_TOKEN once v0.6.0 is released
     git remote set-url origin "https://$GITHUB_USER_TOKEN:@github.com/$TRAVIS_REPO_SLUG.git"
