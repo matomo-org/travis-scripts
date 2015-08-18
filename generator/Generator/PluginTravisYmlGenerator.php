@@ -85,7 +85,7 @@ class PluginTravisYmlGenerator extends Generator
 
             $testsToExclude[] = array('description' => 'execute UI tests only w/ PHP 5.6',
                 'php' => '5.3.3',
-                'env' => 'TEST_SUITE=UITests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_LATEST_STABLE_TEST_TARGET');
+                'env' => "TEST_SUITE=UITests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_LATEST_STABLE_TEST_TARGET");
         }
 
         if (empty($testsToRun)) {
