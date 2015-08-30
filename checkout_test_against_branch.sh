@@ -48,6 +48,7 @@ if [ ! -d ./tests/travis/.git ]; then
 fi
 
 cd tests/travis
+git fetch
 
 echo "Checking for travis-scripts branch to use..."
 if git rev-parse --verify "$TEST_AGAINST_PIWIK_BRANCH" ; then
