@@ -60,7 +60,7 @@ if git rev-parse --verify "$TEST_AGAINST_PIWIK_BRANCH" ; then
 else
     echo "Available branches:"
 
-    git branch
+    git branch -a
 fi
 
 cd ../..
