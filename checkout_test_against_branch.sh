@@ -49,6 +49,7 @@ fi
 
 cd tests/travis
 
+echo "Checking for travis-scripts branch to use..."
 if git rev-parse --verify "$TEST_AGAINST_PIWIK_BRANCH" ; then
     echo "Found travis-scripts branch or tag corresponding to TEST_AGAINST_PIWIK_BRANCH environment variable, checking out '$TEST_AGAINST_PIWIK_BRANCH' for tests."
 
