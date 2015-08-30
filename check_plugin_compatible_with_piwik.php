@@ -17,11 +17,15 @@ $pluginJsonPath = __DIR__ . "/../../../$pluginName/plugin.json";
 
 $pluginJsonContents = file_get_contents($pluginJsonPath);
 $pluginJsonContents = json_decode($pluginJsonContents, true);
+$minimumRequiredPiwik = isset($pluginJsonContents["require"]["piwik"]) ? : "";
 
-if (!empty($pluginJsonContents["require"]["piwik"])
-    && version_compare(\Piwik\Version::VERSION, $pluginJsonContents["require"]["piwik"]) < 0
+if (!empty($minimumRequiredPiwik)
+    && version_compare(\Piwik\Version::VERSION, $minimumRequiredPiwik) < 0
 ) {
-    echo "\n******* Plugin $pluginName's minimum required Piwik is > than the test against version "
+    echo "\n******* Plugin $pluginName's minimum required Piwik ('$minimumRequiredPiwik') is > than the test against version "
         . \Piwik\Version::VERSION . " *******\n";
     exit(1);
+} else {
+    echo "Plugin $pluginName's minimum required Piwik ('$minimumRequiredPiwik') is less than the test against version "
+        . \Piwik\Version::VERSION;
 }
