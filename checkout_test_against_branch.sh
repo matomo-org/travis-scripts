@@ -53,10 +53,10 @@ echo "Fetching travis-scripts branches"
 git fetch origin
 
 echo "Checking for travis-scripts branch to use..."
-if git rev-parse --verify "$TEST_AGAINST_PIWIK_BRANCH" ; then
+if git ls-remote --exit-code . "origin/$TEST_AGAINST_PIWIK_BRANCH" ; then
     echo "Found travis-scripts branch or tag corresponding to TEST_AGAINST_PIWIK_BRANCH environment variable, checking out '$TEST_AGAINST_PIWIK_BRANCH' for tests."
 
-    git checkout "$TEST_AGAINST_PIWIK_BRANCH"
+    git checkout "origin/$TEST_AGAINST_PIWIK_BRANCH"
 else
     echo "Available branches:"
 
