@@ -56,18 +56,7 @@ chmod a+rw ./plugins/*/tests/Integration/processed || true
 # install phpredis
 if [[ "$TRAVIS_PHP_VERSION" == 7* ]];
 then
-    # travis does not support redis for PHP 7 yet, in https://github.com/phpredis/phpredis/issues/652 it is recommended to use
-    # https://github.com/Sean-Der/phpredis/tree/php7 for now, should maybe later change it to https://github.com/phpredis/phpredis
-    # or use redis provided by travis as soon as possible
-    echo "extension=redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    git clone --branch=php7 https://github.com/edtechd/phpredis phpredis;
-    cd phpredis
-    phpize
-    ./configure
-    make
-    sudo make install
-    cd ..
-    rm -fr phpredis
+    echo "Ignoring installation of Redis for PHP 7 as it is not supported by phpredis or Travis yet"
 else
     echo 'extension="redis.so"' > ./tmp/redis.ini
     phpenv config-add ./tmp/redis.ini
