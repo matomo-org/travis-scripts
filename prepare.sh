@@ -60,7 +60,7 @@ then
     # https://github.com/Sean-Der/phpredis/tree/php7 for now, should maybe later change it to https://github.com/phpredis/phpredis
     # or use redis provided by travis as soon as possible
     echo "extension=redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    git clone --branch=php7 https://github.com/Sean-Der/phpredis.git phpredis;
+    git clone --branch=php7 https://github.com/edtechd/phpredis phpredis;
     cd phpredis
     phpize
     ./configure
