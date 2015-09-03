@@ -70,7 +70,7 @@ class PluginTravisYmlGenerator extends Generator
 
         if ($this->isTargetPluginContainsPluginTests()) {
             $testsToRun[] = array('name' => 'PluginTests',
-                'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_LATEST_STABLE_TEST_TARGET");
+                'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_TEST_TARGET");
             $testsToRun[] = array('name' => 'PluginTests',
                 'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=minimum_required_piwik");
 
@@ -81,11 +81,11 @@ class PluginTravisYmlGenerator extends Generator
 
         if ($this->isTargetPluginContainsUITests()) {
             $testsToRun[] = array('name' => 'UITests',
-                'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_LATEST_STABLE_TEST_TARGET");
+                'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_TEST_TARGET");
 
             $testsToExclude[] = array('description' => 'execute UI tests only w/ PHP 5.6',
                 'php' => '5.3.3',
-                'env' => "TEST_SUITE=UITests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_LATEST_STABLE_TEST_TARGET");
+                'env' => "TEST_SUITE=UITests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_TEST_TARGET");
         }
 
         if (empty($testsToRun)) {

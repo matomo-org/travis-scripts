@@ -34,7 +34,9 @@ env:
     - PIWIK_ROOT_DIR=$TRAVIS_BUILD_DIR
 {% else %}
     - PIWIK_ROOT_DIR=$TRAVIS_BUILD_DIR/piwik
-    - PIWIK_LATEST_STABLE_TEST_TARGET={{ latestStableVersion }}
+    # this variable controls the version of Piwik your tests will run against. increment it when
+    # making your plugin compatible with the new version of Piwik.
+    - PIWIK_TEST_TARGET={{ latestStableVersion }}
 {% endif %}
 {% if extraGlobalEnvVars|default is not empty %}{% for var in extraGlobalEnvVars %}    - {{ var|raw }}
 {% endfor %}{% endif %}
