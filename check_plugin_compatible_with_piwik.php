@@ -26,6 +26,9 @@ if (!empty($minimumRequiredPiwik)
 ) {
     echo "\n******* Plugin $pluginName's minimum required Piwik ('$minimumRequiredPiwik') is > than the test against version "
         . \Piwik\Version::VERSION . " *******\n";
+    echo "Did you bump your plugin's minimum required Piwik to a version that doesn't exist yet? Make sure the "
+        . "PIWIK_TEST_TARGET environment variable is set to the right version, branch or commit hash in your "
+        . ".travis.yml.\n";
     exit(1);
 } else {
     echo "Plugin $pluginName's minimum required Piwik ('$minimumRequiredPiwik') is less than the test against version "
