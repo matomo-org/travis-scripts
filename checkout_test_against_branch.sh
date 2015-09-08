@@ -29,6 +29,13 @@ echo "Testing against '$TEST_AGAINST_PIWIK_BRANCH'"
 rm -rf ./tests/travis
 git reset --hard
 if ! git checkout "$TEST_AGAINST_PIWIK_BRANCH"; then
+    echo ""
+    echo "Failed to checkout "$TEST_AGAINST_PIWIK_BRANCH"
+    echo "git status:"
+    echo ""
+
+    git status
+
     exit 1
 fi
 
