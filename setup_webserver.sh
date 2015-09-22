@@ -61,5 +61,3 @@ $PHP_FPM_BIN --fpm-config "$DIR/php-fpm.ini"
 
 echo "Starting nginx using config $DIR/piwik_nginx.conf"
 nginx -c "$DIR/piwik_nginx.conf"
-
-cat /var/log/nginx/error.log
