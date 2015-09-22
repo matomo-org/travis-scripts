@@ -7,10 +7,11 @@ fi
 set -e
 
 # Install fonts for UI tests
-if [ "$TEST_SUITE" = "UITests" ];
-then
-    cp ./tests/travis/fonts/* /usr/share/fonts/
-fi
+# NOTE: can't do this on new infrastructure, hopefully it won't cause too many problems
+#if [ "$TEST_SUITE" = "UITests" ];
+#then
+    # sudo cp ./tests/travis/fonts/* /usr/share/fonts/
+#fi
 
 # Copy Piwik configuration
 echo "Install config.ini.php"
