@@ -7,6 +7,7 @@ fi
 set -e
 
 DIR=$(dirname "$0")
+DIR=$(realpath "$DIR")
 
 service nginx stop
 
@@ -22,7 +23,7 @@ else
 fi;
 
 PHP_FPM_CONF="$DIR/php-fpm.conf"
-PHP_FPM_SOCK=$(realpath "$DIR")/php-fpm.sock
+PHP_FPM_SOCK="$DIR/php-fpm.sock"
 
 if [ -d "$TRAVIS_BUILD_DIR/../piwik/tmp/" ]; then
     PHP_FPM_LOG="$TRAVIS_BUILD_DIR/../piwik/tmp/php-fpm.log"
