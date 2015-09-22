@@ -23,10 +23,6 @@ phpenv rehash
 echo "Generate documentation for PiwikTracker"
 phpdoc -f libs/PiwikTracker/PiwikTracker.php --title="PiwikTracker" -t docs/PiwikTracker/ --template new-black
 
-# Install lftp
-echo "Installing lftp"
-sudo apt-get install lftp > /dev/null
-
 # Upload generated docs via FTP
 echo "Upload generated docs"
 lftp -u piwik-docs,$FTPPASS ftp.piwik.org -e "set ftp:ssl-allow no; set net:max-retries 1; mirror -R docs/PiwikTracker www/PiwikTracker; quit"
