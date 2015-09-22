@@ -23,7 +23,7 @@ then
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
     then
         touch ../javascript/enable_sqlite
-        phantomjs ../javascript/testrunner.js
+        phantomjs ../javascript/testrunner.js "http://localhost:3000/tests/javascript/"
     elif [ "$TEST_SUITE" = "UITests" ]
     then
         if [ -n "$PLUGIN_NAME" ]
