@@ -6,11 +6,6 @@ fi
 
 set -e
 
-sudo apt-get update > /dev/null
-
-# Install XMLStarlet
-sudo apt-get install -qq xmlstarlet > /dev/null
-
 # Install fonts for UI tests
 if [ "$TEST_SUITE" = "UITests" ];
 then
@@ -37,7 +32,8 @@ fi;
 # If we have a test suite remove code coverage report
 if [ -n "$TEST_SUITE" ]
 then
-	xmlstarlet ed -L -d "//phpunit/logging/log[@type='coverage-html']" ./tests/PHPUnit/phpunit.xml
+    # TODO: use php to remove this.
+	# xmlstarlet ed -L -d "//phpunit/logging/log[@type='coverage-html']" ./tests/PHPUnit/phpunit.xml
 fi
 
 # Create tmp/ sub-directories
