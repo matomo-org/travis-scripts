@@ -58,5 +58,5 @@ sed -i "s|@PHP_FPM_SOCK@|$PHP_FPM_SOCK|g" "$DIR/piwik_nginx.conf"
 echo "Starting php-fpm"
 $PHP_FPM_BIN --fpm-config "$DIR/php-fpm.ini"
 
-echo "Starting nginx"
+echo "Starting nginx using config $DIR/piwik_nginx.conf"
 nginx -c "$DIR/piwik_nginx.conf"
