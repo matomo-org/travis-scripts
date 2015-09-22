@@ -69,7 +69,7 @@ cat /etc/nginx/mime.types
 echo ""
 echo ""
 
-ls /etc/nginx/conf.d/*.conf
+ls /etc/nginx/*
 
 echo ""
 echo ""
