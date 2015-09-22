@@ -59,22 +59,9 @@ sed -i "s|@PHP_FPM_SOCK@|$PHP_FPM_SOCK|g" "$DIR/piwik_nginx.conf"
 echo "Starting php-fpm"
 $PHP_FPM_BIN --fpm-config "$DIR/php-fpm.ini"
 
-cat "$DIR/piwik_nginx.conf"
-
-echo ""
-echo ""
-
-cat /etc/nginx/mime.types
-
-echo ""
-echo ""
-
-ls /etc/nginx/*
-
-echo ""
-echo ""
-
-cat /etc/nginx/fastcgi_params
+#cat "$DIR/piwik_nginx.conf"
+cat /etc/nginx/nginx.conf
+cat /etc/nginx/sites-available/default
 
 echo ""
 echo ""
