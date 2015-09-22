@@ -66,5 +66,9 @@ cat /etc/nginx/sites-available/default
 echo ""
 echo ""
 
+sudo chown -R $USER:$USER /var/log/nginx
+
 echo "Starting nginx using config $DIR/piwik_nginx.conf"
 nginx -c "$DIR/piwik_nginx.conf"
+
+cat /var/log/nginx/error.log
