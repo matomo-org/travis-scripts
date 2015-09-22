@@ -9,7 +9,7 @@ set -e
 # Install fonts for UI tests
 if [ "$TEST_SUITE" = "UITests" ];
 then
-    sudo cp ./tests/travis/fonts/* /usr/share/fonts/
+    cp ./tests/travis/fonts/* /usr/share/fonts/
 fi
 
 # Copy Piwik configuration
