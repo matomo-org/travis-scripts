@@ -30,11 +30,11 @@ then
 fi;
 
 # If we have a test suite remove code coverage report
-if [ -n "$TEST_SUITE" ]
-then
+#if [ -n "$TEST_SUITE" ]
+#then
     # TODO: use php to remove this.
 	# xmlstarlet ed -L -d "//phpunit/logging/log[@type='coverage-html']" ./tests/PHPUnit/phpunit.xml
-fi
+#fi
 
 # Create tmp/ sub-directories
 mkdir -p ./tmp/assets
