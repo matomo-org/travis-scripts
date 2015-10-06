@@ -15,12 +15,12 @@ language: php
 php:
   - 5.6
   - 5.3.3
-#  - hhvm
 {% else %}
 php:
 {% for version in phpVersions %}  - {{ version|raw }}
 {% endfor %}
 {% endif %}
+#  - hhvm
 
 services:
   - redis-server
