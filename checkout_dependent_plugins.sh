@@ -13,7 +13,7 @@ else
         dependentPluginName=`echo "$pluginSlug" | sed -E 's/[a-zA-Z0-9_]+\/[a-zA-Z0-9_]+-(.*)/\1/'`
 
         echo "Cloning $pluginSlug into plugins/$dependentPluginName..."
-        git clone --depth=1 "https://$GITHUB_USER_TOKEN:@github.com/$pluginSlug" "plugins/$dependentPluginName" 2> /dev/null
+        git clone --depth=1 "https://$GITHUB_USER_TOKEN:@github.com/$pluginSlug" "plugins/$dependentPluginName" 2>&1 | sed "s/$GITHUB_USER_TOKEN/\$GITHUB_USER_TOKEN/"
     done
 
     echo "Plugin directory:"
