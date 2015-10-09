@@ -53,9 +53,6 @@ else
         then
             echo "Uploading artifacts..."
 
-            # add list of expected screenshots to upload so we can detect if any are missing
-            ls expected-ui-screenshots > screenshot-diffs/expected-ui-screenshots.list
-
             echo "[NOTE] screenshot diff dir:"
             echo "`pwd`/screenshot-diffs"
 
