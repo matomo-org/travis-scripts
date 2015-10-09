@@ -39,8 +39,9 @@ else
             cd ./tests/UI
         fi
 
-        echo "Processed Screenshots:"
+        echo "[NOTE] Processed Screenshots:"
         ls processed-ui-screenshots
+        echo ""
 
         # upload processed tarball
         tar -cjf processed-ui-screenshots.tar.bz2 processed-ui-screenshots --exclude='.gitkeep'
@@ -50,7 +51,10 @@ else
         cd $base_dir/tests/UI
         if [ -d "./screenshot-diffs" ];
         then
-            echo "Uploading artifcats..."
+            echo "Uploading artifacts..."
+
+            # add list of expected screenshots to upload so we can detect if any are missing
+            ls expected-ui-screenshots > screenshot-diffs/expected-ui-screenshots.list
 
             echo "[NOTE] screenshot diff dir:"
             echo "`pwd`/screenshot-diffs"
