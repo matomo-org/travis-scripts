@@ -76,7 +76,7 @@ then
             travis_wait phpunit --configuration phpunit.xml --testsuite $TEST_SUITE --colors $PHPUNIT_EXTRA_OPTIONS | tee phpunit.out
         fi
 
-        exit_code="$?"
+        exit_code="${PIPESTATUS[0]}"
         if [ "$exit_code" -ne "0" ]; then
             exit $exit_code
         elif grep "No tests executed" phpunit.out; then
