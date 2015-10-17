@@ -42,7 +42,7 @@ else
         echo "[NOTE] Processed Screenshots:"
         ls processed-ui-screenshots
         echo ""
-
+echo "URL BASE: $url_base"
         # upload processed tarball
         tar -cjf processed-ui-screenshots.tar.bz2 processed-ui-screenshots --exclude='.gitkeep'
         curl -X POST --data-binary @processed-ui-screenshots.tar.bz2 "$url_base&artifact_name=processed-screenshots"
