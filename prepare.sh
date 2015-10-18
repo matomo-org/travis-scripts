@@ -12,6 +12,9 @@ then
     mkdir $HOME/.fonts
     cp ./tests/travis/fonts/* $HOME/.fonts
     fc-cache -f -v
+
+    echo "fonts:"
+    ls $HOME/.fonts
 fi
 
 # Copy Piwik configuration
