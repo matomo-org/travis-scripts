@@ -178,6 +178,7 @@ class PluginTravisYmlGenerator extends Generator
         $phpRequirement = $pluginJsonContents['require']['php'];
         if (!preg_match('/>=([0-9]+\.[0-9]+\.[0-9]+)/', $phpRequirement, $matches)) {
             $this->log("info", "Cannot detect minimum php version from php requirement: '$phpRequirement'");
+            return null;
         }
 
         $phpRequirement = $matches[1];
