@@ -15,6 +15,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class Generator
 {
+    const DEFAULT_MINIMUM_PHP_VERSION_TO_TEST = '5.3.3';
+    const DEFAULT_MAXIMUM_PHP_VERSION_TO_TEST = '5.6';
+
     /**
      * @var string[]
      */
@@ -36,6 +39,19 @@ abstract class Generator
     protected $repoRootDirOverride = null;
 
     /**
+     * @var string[]
+     */
+    protected $phpVersions = array(
+        self::DEFAULT_MAXIMUM_PHP_VERSION_TO_TEST,
+        self::DEFAULT_MINIMUM_PHP_VERSION_TO_TEST,
+    );
+
+    /**
+     * @var string
+     */
+    protected $minimumPhpVersion;
+
+    /**
      * Constructor.
      *
      * @param string[] $options The string options applied to the generate:travis-yml command.
@@ -45,6 +61,11 @@ abstract class Generator
         $this->options = $options;
         $this->output = $output;
         $this->repoRootDirOverride = @$options['repo-root-dir'];
+
+        if (!empty($this->options['php-versions'])) {
+            $phpVersions = explode(',', $this->options['php-versions']);
+            $this->phpVersions = $phpVersions;
+        }
 
         $this->view = new TravisYmlView();
     }
@@ -93,12 +114,19 @@ abstract class Generator
 
     protected function configureView()
     {
+        if (empty($this->minimumPhpVersion)) {
+            $phpVersions = $this->phpVersions;
+            usort($phpVersions, 'version_compare');
+            $this->minimumPhpVersion = reset($phpVersions);
+        }
+
+        $this->log("info", "Using minimum PHP version: {$this->minimumPhpVersion}");
+
         $thisConsoleCommand = $this->getExecutedConsoleCommandForTravis();
         $this->view->setGenerateYmlCommand($thisConsoleCommand);
 
-        $phpVersions = @$this->options['php-versions'];
-        if (!empty($phpVersions)) {
-            $this->view->setPhpVersions(explode(',', $phpVersions));
+        if (!empty($this->phpVersions)) {
+            $this->view->setPhpVersions($this->phpVersions);
         }
 
         $outputYmlPath = $this->getTravisYmlOutputPath();

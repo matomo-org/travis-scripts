@@ -24,6 +24,14 @@ class PluginTravisYmlGenerator extends Generator
         parent::__construct($options, $output);
 
         $this->targetPlugin = $targetPlugin;
+
+        if (empty($this->minimumPhpVersion)) {
+            $this->minimumPhpVersion = $this->getPluginMinimumPhpVersion();
+
+            if (!empty($this->minimumPhpVersion)) {
+                $this->replaceMinimumPhpVersionInPhpVersions();
+            }
+        }
     }
 
     protected function travisEncrypt($data)
@@ -75,7 +83,7 @@ class PluginTravisYmlGenerator extends Generator
                 'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=minimum_required_piwik");
 
             $testsToExclude[] = array('description' => 'execute latest stable tests only w/ PHP 5.5',
-                'php' => '5.3.3',
+                'php' => $this->minimumPhpVersion,
                 'env' => 'TEST_SUITE=PluginTests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=minimum_required_piwik');
         }
 
@@ -84,7 +92,7 @@ class PluginTravisYmlGenerator extends Generator
                 'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_TEST_TARGET");
 
             $testsToExclude[] = array('description' => 'execute UI tests only w/ PHP 5.6',
-                'php' => '5.3.3',
+                'php' => $this->minimumPhpVersion,
                 'env' => "TEST_SUITE=UITests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_TEST_TARGET");
         }
 
@@ -150,5 +158,49 @@ class PluginTravisYmlGenerator extends Generator
         $latestStable = end($tags);
         $this->log("info", "Testing against latest known stable $latestStable.");
         return $latestStable;
+    }
+
+    private function getPluginMinimumPhpVersion()
+    {
+        $pluginJsonPath = $this->getPluginJsonRootDir();
+        if (empty($pluginJsonPath)) {
+            $this->log("info", "No plugin.json file found, cannot detect minimum PHP version.");
+            return null;
+        }
+
+        $pluginJsonContents = file_get_contents($pluginJsonPath);
+        $pluginJsonContents = json_decode($pluginJsonContents, $assoc = true);
+        if (empty($pluginJsonContents['require']['php'])) {
+            $this->log("info", "No PHP version requirement in plugin.json");
+            return null;
+        }
+
+        $phpRequirement = $pluginJsonContents['require']['php'];
+        if (!preg_match('/>=([0-9]+\.[0-9]+\.[0-9]+)/', $phpRequirement, $matches)) {
+            $this->log("info", "Cannot detect minimum php version from php requirement: '$phpRequirement'");
+            return null;
+        }
+
+        $phpRequirement = $matches[1];
+
+        $this->log("info", "Detected minimum PHP version: '$phpRequirement'");
+
+        return $phpRequirement;
+    }
+
+    private function getPluginJsonRootDir()
+    {
+        return $this->getRepoRootDir() . '/plugin.json';
+    }
+
+    private function replaceMinimumPhpVersionInPhpVersions()
+    {
+        $phpVersions = $this->phpVersions;
+        uasort($phpVersions, 'version_compare');
+
+        reset($phpVersions);
+        $minInArrayKey = key($phpVersions);
+
+        $this->phpVersions[$minInArrayKey] = $this->minimumPhpVersion;
     }
 }
