@@ -18,7 +18,7 @@ sudo apt-get install libaio1 > /dev/null
 
 # install mysql 5.6
 # old url: http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.14-debian6.0-x86_64.deb/from/http://cdn.mysql.com/
-DEB_URL="https://downloads.mariadb.com/archives/mysql-5.6/mysql-5.6.27-debian6.0-x86_64.deb"
+DEB_URL="http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.14-debian6.0-x86_64.deb"
 wget -O mysql-5.6.14.deb "$DEB_URL"  > /dev/null
 sudo dpkg -i mysql-5.6.14.deb
 sudo cp /opt/mysql/server-5.6/support-files/mysql.server /etc/init.d/mysql.server
