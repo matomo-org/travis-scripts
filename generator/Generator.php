@@ -65,6 +65,8 @@ abstract class Generator
         if (!empty($this->options['php-versions'])) {
             $phpVersions = explode(',', $this->options['php-versions']);
             $this->phpVersions = $phpVersions;
+
+            $this->setMinimumPhpVersionFromPhpVersions();
         }
 
         $this->view = new TravisYmlView();
@@ -115,9 +117,7 @@ abstract class Generator
     protected function configureView()
     {
         if (empty($this->minimumPhpVersion)) {
-            $phpVersions = $this->phpVersions;
-            usort($phpVersions, 'version_compare');
-            $this->minimumPhpVersion = reset($phpVersions);
+            $this->setMinimumPhpVersionFromPhpVersions();
         }
 
         $this->log("info", "Using minimum PHP version: {$this->minimumPhpVersion}");
@@ -243,5 +243,12 @@ abstract class Generator
     protected function getPiwikRootDir()
     {
         return __DIR__ . "/../../..";
+    }
+
+    private function setMinimumPhpVersionFromPhpVersions()
+    {
+        $phpVersions = $this->phpVersions;
+        usort($phpVersions, 'version_compare');
+        $this->minimumPhpVersion = reset($phpVersions);
     }
 }
