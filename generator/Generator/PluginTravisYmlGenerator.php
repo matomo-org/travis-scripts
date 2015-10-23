@@ -106,6 +106,10 @@ class PluginTravisYmlGenerator extends Generator
 
     private function isTargetPluginContainsPluginTests()
     {
+        if ($this->options['force-php-tests']) {
+            return true;
+        }
+
         $pluginPath = $this->getRepoRootDir();
         return $this->doesFolderContainPluginTests($pluginPath . "/tests")
         || $this->doesFolderContainPluginTests($pluginPath . "/Test");
@@ -118,6 +122,10 @@ class PluginTravisYmlGenerator extends Generator
 
     private function isTargetPluginContainsUITests()
     {
+        if ($this->options['force-ui-tests']) {
+            return true;
+        }
+
         $pluginPath = $this->getRepoRootDir();
         return $this->doesFolderContainUITests($pluginPath . "/tests")
             || $this->doesFolderContainUITests($pluginPath . "/Test");
