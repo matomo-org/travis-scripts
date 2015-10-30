@@ -32,7 +32,20 @@ class TravisYmlView
         'before_script',
         'after_script',
         'after_success',
-        'sudo'
+        'sudo',
+        'addons',
+    );
+
+    /**
+     * YAML partials that are used in various parts of the .travis.yml file, but do not constitute
+     * changes to procedural sections like before_install or install. Those sections can be appended
+     * or prepended to and thus have .before.yml and .after.yml files, but these are just inserted.
+     *
+     * @var string[]
+     */
+    private static $travisYmlPartials = array(
+        'addons.apt.sources',
+        'addons.apt.packages',
     );
 
     /**
@@ -48,7 +61,7 @@ class TravisYmlView
         'install',
         'before_script',
         'after_script',
-        'after_success'
+        'after_success',
     );
 
     /**
@@ -73,6 +86,13 @@ class TravisYmlView
                 'strict_variables' => true, // throw an exception if variables are invalid
             )
         );
+
+        $this->twig->addFilter(new \Twig_SimpleFilter('indent', function ($value, $spaceCount) {
+            $value = trim($value);
+            $indent = str_repeat(' ', $spaceCount);
+
+            return preg_replace('/\n\s*/', "\n$indent", $value);
+        }));
 
         $this->setTestsToRun(array());
         $this->setTestsToExclude(array());
@@ -112,23 +132,8 @@ class TravisYmlView
      */
     public function setPathToCustomTravisStepsFiles($path)
     {
-        $customTravisBuildSteps = array();
-
-        foreach (self::$travisYmlExtendableSectionNames as $name) {
-            $customTravisBuildSteps[$name] = array();
-
-            $beforeStepsTemplate = $this->getPathToCustomTravisStepsFile($path, $name, 'before');
-            if (file_exists($beforeStepsTemplate)) {
-                $customTravisBuildSteps[$name]['before'] = $this->changeIndent(file_get_contents($beforeStepsTemplate), '  ');
-            }
-
-            $afterStepsTemplate = $this->getPathToCustomTravisStepsFile($path, $name, 'after');
-            if (file_exists($afterStepsTemplate)) {
-                $customTravisBuildSteps[$name]['after'] = $this->changeIndent(file_get_contents($afterStepsTemplate), '  ');
-            }
-        }
-
-        $this->variables['customTravisBuildSteps'] = $customTravisBuildSteps;
+        $this->variables['customTravisBuildSteps'] = $this->getCustomTravisBuildSteps($path);
+        $this->variables['partials'] = $this->getCustomTravisPartials($path);
     }
 
     /**
@@ -241,20 +246,49 @@ class TravisYmlView
         $this->variables['latestStableVersion'] = $latestStableVersion;
     }
 
+    public function useNewTravisInfrastructure()
+    {
+        $this->variables['useNewTravisInfrastructure'] = true;
+    }
+
     public function render()
     {
         return $this->twig->render('travis.yml.twig', $this->variables);
     }
 
-    private function changeIndent($text, $newIndent)
+    private function getCustomTravisBuildSteps($path)
     {
-        $text = trim($text);
+        $customTravisBuildSteps = array();
+        foreach (self::$travisYmlExtendableSectionNames as $name) {
+            $customTravisBuildSteps[$name] = array();
 
-        return preg_replace("/^\\s*/", $newIndent, $text);
+            $customTravisBuildSteps[$name]['before'] = $this->getTravisPartial($path, $name . '.before');
+            $customTravisBuildSteps[$name]['after'] = $this->getTravisPartial($path, $name . '.after');
+        }
+        return $customTravisBuildSteps;
     }
 
-    private function getPathToCustomTravisStepsFile($rootPath, $sectionName, $type)
+    private function getCustomTravisPartials($path)
     {
-        return "$rootPath/$sectionName.$type.yml";
+        $partials = array();
+        foreach (self::$travisYmlPartials as $partialName) {
+            $partials[$partialName] = $this->getTravisPartial($path, $partialName);
+        }
+        return $partials;
+    }
+
+    private function getTravisPartial($path, $partialName)
+    {
+        $partialPath = $this->getPathToCustomTravisStepsFile($path, $partialName);
+        if (file_exists($partialPath)) {
+            return file_get_contents($partialPath);
+        } else {
+            return null;
+        }
+    }
+
+    private function getPathToCustomTravisStepsFile($rootPath, $sectionName)
+    {
+        return "$rootPath/$sectionName.yml";
     }
 }

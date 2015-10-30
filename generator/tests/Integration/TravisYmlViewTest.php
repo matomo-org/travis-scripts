@@ -32,6 +32,7 @@ class TravisYmlViewTest extends PHPUnit_Framework_TestCase
             array('name' => "PluginTests", 'vars' => "MYSQL_ADAPTER=PDO_MYSQL"),
             array('name' => "PluginTests", 'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=latest_stable")
         ));
+        $view->useNewTravisInfrastructure();
         $output = $view->render();
 
         $yaml = Spyc::YAMLLoadString($output);
@@ -48,11 +49,14 @@ class TravisYmlViewTest extends PHPUnit_Framework_TestCase
         $this->assertContains("TEST_SUITE=PluginTests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=latest_stable", $yaml['env']['matrix']);
         $this->assertNotContains("TEST_SUITE=UITests MYSQL_ADAPTER=PDO_MYSQL", $yaml['env']['matrix']);
 
+        $this->assertEquals(false, $yaml['sudo']);
+
         $this->assertBuildSectionsNotEmpty($yaml);
 
         $this->assertContains("export GENERATE_TRAVIS_YML_COMMAND=\"./console generate:travis-yml \\'arg1\\' arg2\"", $yaml['install']);
 
         $this->assertViewUsesPluginSpecifiedTravisCommands($yaml);
+        $this->assertViewUsesPluginSpecifiedAptPackages($yaml);
     }
 
     public function testViewPreservesCommentsAndEnvVarsIfExistingYml()
@@ -80,6 +84,8 @@ class TravisYmlViewTest extends PHPUnit_Framework_TestCase
         $this->assertNotContains("PLUGIN_NAME=ExamplePlugin", $yaml['env']['global']);
         $this->assertNotContains("PIWIK_ROOT_DIR=\$TRAVIS_BUILD_DIR/piwik", $yaml['env']['global']);
 
+        $this->assertEquals('required', $yaml['sudo']);
+
         $this->assertBuildSectionsNotEmpty($yaml);
 
         $this->assertNotEmpty($yaml['custom_section']);
@@ -89,6 +95,7 @@ class TravisYmlViewTest extends PHPUnit_Framework_TestCase
         $this->assertContains("notifications:\n  # another section\n  - a\n  - b\n  - c", $output);
 
         $this->assertViewUsesPluginSpecifiedTravisCommands($yaml);
+        $this->assertViewUsesPluginSpecifiedAptPackages($yaml);
     }
 
     public function testViewGeneratesCorrectLookingYAMLForCore()
@@ -113,6 +120,7 @@ class TravisYmlViewTest extends PHPUnit_Framework_TestCase
         $this->assertBuildSectionsNotEmpty($yaml);
 
         $this->assertViewDoesNotUsePluginSpecifiedTravisCommands($yaml);
+        $this->assertViewDoesNotUsePluginSpecifiedAptPackages($yaml);
     }
 
     public function testViewGeneratesCorrectLookingYAMLWhenCustomPhpVersionsUsed()
@@ -174,5 +182,25 @@ class TravisYmlViewTest extends PHPUnit_Framework_TestCase
 
         $this->assertNotEquals("after_script hook line 1", reset($yaml['after_script']));
         $this->assertNotEquals("after_script hook line 2", end($yaml['after_script']));
+    }
+
+    private function assertViewUsesPluginSpecifiedAptPackages($yaml)
+    {
+        $sources = $yaml['addons']['apt']['sources'];
+        $packages = $yaml['addons']['apt']['packages'];
+
+        $this->assertContains('custom apt source', $sources);
+        $this->assertContains('custom apt package', $packages);
+        $this->assertContains('another custom apt package', $packages);
+    }
+
+    private function assertViewDoesNotUsePluginSpecifiedAptPackages($yaml)
+    {
+        $sources = $yaml['addons']['apt']['sources'];
+        $packages = $yaml['addons']['apt']['packages'];
+
+        $this->assertNotContains('custom apt source', $sources);
+        $this->assertNotContains('custom apt package', $packages);
+        $this->assertNotContains('another custom apt package', $packages);
     }
 }

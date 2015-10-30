@@ -7,12 +7,9 @@ fi
 set -e
 
 DIR=$(dirname "$0")
+DIR=$(realpath "$DIR")
 
-echo "Installing nginx"
-sudo apt-get update -qq > /dev/null
-sudo apt-get install -qq nginx realpath > /dev/null
-
-sudo service nginx stop
+service nginx stop
 
 # Setup PHP-FPM
 echo "Configuring php-fpm"
@@ -26,7 +23,7 @@ else
 fi;
 
 PHP_FPM_CONF="$DIR/php-fpm.conf"
-PHP_FPM_SOCK=$(realpath "$DIR")/php-fpm.sock
+PHP_FPM_SOCK="$DIR/php-fpm.sock"
 
 if [ -d "$TRAVIS_BUILD_DIR/../piwik/tmp/" ]; then
     PHP_FPM_LOG="$TRAVIS_BUILD_DIR/../piwik/tmp/php-fpm.log"
@@ -57,11 +54,10 @@ NGINX_CONF="/etc/nginx/sites-enabled/default"
 
 sed -i "s|@PIWIK_ROOT@|$PIWIK_ROOT|g" "$DIR/piwik_nginx.conf"
 sed -i "s|@PHP_FPM_SOCK@|$PHP_FPM_SOCK|g" "$DIR/piwik_nginx.conf"
-sudo cp "$DIR/piwik_nginx.conf" $NGINX_CONF
 
 # Start daemons
 echo "Starting php-fpm"
-sudo $PHP_FPM_BIN --fpm-config "$DIR/php-fpm.ini"
-sudo chown www-data:www-data ./tests/travis/php-fpm.sock
-echo "Starting nginx"
-sudo service nginx start
+$PHP_FPM_BIN --fpm-config "$DIR/php-fpm.ini"
+
+echo "Starting nginx using config $DIR/piwik_nginx.conf"
+nginx -c "$DIR/piwik_nginx.conf"

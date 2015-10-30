@@ -23,7 +23,7 @@ then
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
     then
         touch ../javascript/enable_sqlite
-        phantomjs ../javascript/testrunner.js
+        phantomjs ../javascript/testrunner.js "http://localhost:3000/tests/javascript/"
     elif [ "$TEST_SUITE" = "UITests" ]
     then
         if [ -n "$PLUGIN_NAME" ]
@@ -61,9 +61,9 @@ then
 
         if [ -n "$PLUGIN_NAME" ]
         then
-            phantomjs ../lib/screenshot-testing/run-tests.js --assume-artifacts --persist-fixture-data --screenshot-repo=$TRAVIS_REPO_SLUG --plugin=$PLUGIN_NAME $UITEST_EXTRA_OPTIONS
+            ./../../console tests:run-ui --assume-artifacts --persist-fixture-data --screenshot-repo=$TRAVIS_REPO_SLUG --plugin=$PLUGIN_NAME --extra-options="$UITEST_EXTRA_OPTIONS"
         else
-            phantomjs ../lib/screenshot-testing/run-tests.js --store-in-ui-tests-repo --persist-fixture-data --assume-artifacts --core $UITEST_EXTRA_OPTIONS
+            ./../../console tests:run-ui --store-in-ui-tests-repo --persist-fixture-data --assume-artifacts --core --extra-options="$UITEST_EXTRA_OPTIONS"
         fi
     elif [ "$TEST_SUITE" = "AllTests" ]
     then

@@ -25,6 +25,21 @@ php:
 services:
   - redis-server
 
+addons:
+  apt:
+    sources:
+      - deadsnakes
+{% if partials['addons.apt.sources']|default is not empty %}      {{ partials['addons.apt.sources']|indent(6)|raw }}{% endif %}
+
+    packages:
+      - python2.6
+      - python2.6-dev
+      - nginx
+      - realpath
+      - lftp
+{% if partials['addons.apt.packages']|default is not empty %}      {{ partials['addons.apt.packages']|indent(6)|raw }}
+{% endif %}
+
 # Separate different test suites
 {% if existingEnv|default is empty -%}
 env:
@@ -64,23 +79,23 @@ matrix:
   {{ existingMatrix|trim|raw }}
 {% endif %}
 
-sudo: required
+sudo: {% if useNewTravisInfrastructure|default %}false{% else %}required{% endif %}
+
 
 script: {{ travisShScriptLocation }}
 
 before_install:
-{% if customTravisBuildSteps.before_install.before|default is not empty %}{{ customTravisBuildSteps.before_install.before|raw }}
+{% if customTravisBuildSteps.before_install.before|default is not empty %}  {{ customTravisBuildSteps.before_install.before|indent(2)|raw }}
 
 {% endif %}
   # do not use the Zend allocator on PHP 5.3 since it will randomly segfault after program execution
   - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && export USE_ZEND_ALLOC=0 || true'
 {% if customTravisBuildSteps.before_install.after|default is not empty %}
 
-{{ customTravisBuildSteps.before_install.after|raw }}
-{% endif %}
+  {{ customTravisBuildSteps.before_install.after|indent(2)|raw }}{% endif %}
 
 install:
-{% if customTravisBuildSteps.install.before|default is not empty %}{{ customTravisBuildSteps.install.before|raw }}
+{% if customTravisBuildSteps.install.before|default is not empty %}  {{ customTravisBuildSteps.install.before|indent(2)|raw }}
 
 {% endif %}
 {% if generationMode == 'plugin' %}
@@ -113,11 +128,6 @@ install:
   - '[ "$PLUGIN_NAME" == "" ] || [ ! -f ./tests/travis/check_plugin_compatible_with_piwik.php ] || php ./tests/travis/check_plugin_compatible_with_piwik.php "$PLUGIN_NAME"'
 {% endif %}
 
-  - '[ ! -f ./tests/travis/install_mysql_5.6.sh ] || ./tests/travis/install_mysql_5.6.sh'
-
-  # Make sure we use Python 2.6
-  - '[ ! -f ./tests/travis/install_python_2.6.sh ] || ./tests/travis/install_python_2.6.sh'
-
   - ./tests/travis/configure_git.sh
 
   # travis now complains about this failing 9 times out of 10, so removing it
@@ -137,11 +147,10 @@ install:
 {% endif %}
 {% if customTravisBuildSteps.install.after|default is not empty %}
 
-{{ customTravisBuildSteps.install.after|raw }}
-{% endif %}
+  {{ customTravisBuildSteps.install.after|indent(2)|raw }}{% endif %}
 
 before_script:
-{% if customTravisBuildSteps.before_script.before|default is not empty %}{{ customTravisBuildSteps.before_script.before|raw }}
+{% if customTravisBuildSteps.before_script.before|default is not empty %}  {{ customTravisBuildSteps.before_script.before|indent(2)|raw }}
 
 {% endif %}
   - if [[ "$TRAVIS_PHP_VERSION" != 7* ]]; then phpenv config-rm xdebug.ini; fi
@@ -179,11 +188,10 @@ before_script:
   - cd {{ travisShCwd }}
 {% if customTravisBuildSteps.before_script.after|default is not empty %}
 
-{{ customTravisBuildSteps.before_script.after|raw }}
-{% endif %}
+  {{ customTravisBuildSteps.before_script.after|indent(2)|raw }}{% endif %}
 
 after_script:
-{% if customTravisBuildSteps.after_script.before|default is not empty %}{{ customTravisBuildSteps.after_script.before|raw }}
+{% if customTravisBuildSteps.after_script.before|default is not empty %}  {{ customTravisBuildSteps.after_script.before|indent(2)|raw }}
 
 {% endif %}
   # change directory back to root travis dir
@@ -199,11 +207,11 @@ after_script:
   - ./tests/travis/upload_artifacts.sh
 {% if customTravisBuildSteps.after_script.after|default is not empty %}
 
-{{ customTravisBuildSteps.after_script.after|raw }}
+  {{ customTravisBuildSteps.after_script.after|indent(2)|raw }}
 {% endif %}
 
 after_success:
-{% if customTravisBuildSteps.after_success.before|default is not empty %}{{ customTravisBuildSteps.after_success.before|raw }}
+{% if customTravisBuildSteps.after_success.before|default is not empty %}  {{ customTravisBuildSteps.after_success.before|indent(2)|raw }}
 
 {% endif %}
   - cd $PIWIK_ROOT_DIR
@@ -211,7 +219,7 @@ after_success:
 {% endif %}
 {% if customTravisBuildSteps.after_success.after|default is not empty %}
 
-{{ customTravisBuildSteps.after_success.after|raw }}
+  {{ customTravisBuildSteps.after_success.after|indent(2)|raw }}
 {% endif %}
 {% if extraSections|default is not empty %}
 

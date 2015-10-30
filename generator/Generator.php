@@ -141,6 +141,10 @@ abstract class Generator
         }
 
         $this->setExtraEnvironmentVariables();
+
+        if (!empty($this->options['sudo-false'])) {
+            $this->view->useNewTravisInfrastructure();
+        }
     }
 
     protected function travisEncrypt($data)
