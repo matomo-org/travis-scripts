@@ -61,6 +61,12 @@ then
 
         if [ -n "$PLUGIN_NAME" ]
         then
+            # HACK: this is a hack to get UI test jobs to run. the --extra-options option was added for 2.15.1, but
+            #       older Piwik's will end up w/ a tests:run-ui command that doesn't support it.
+            # a better fix would be to decouple the piwik testing framework from piwik in a way that allowed us to
+            # change code for all versions of Piwik as well as selectively for individual Piwik versions.
+            git checkout master ../../plugins/TestRunner/Commands/TestsRunUI.php
+
             ./../../console tests:run-ui --assume-artifacts --persist-fixture-data --plugin=$PLUGIN_NAME --extra-options="$UITEST_EXTRA_OPTIONS --screenshot-repo=$TRAVIS_REPO_SLUG"
         else
             ./../../console tests:run-ui --store-in-ui-tests-repo --persist-fixture-data --assume-artifacts --core --extra-options="$UITEST_EXTRA_OPTIONS"
