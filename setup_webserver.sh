@@ -60,4 +60,10 @@ echo "Starting php-fpm"
 $PHP_FPM_BIN --fpm-config "$DIR/php-fpm.ini"
 
 echo "Starting nginx using config $DIR/piwik_nginx.conf"
-nginx -c "$DIR/piwik_nginx.conf"
+if grep "sudo: false" "$DIR/../../.travis.yml"; then
+    nginx -c "$DIR/piwik_nginx.conf"
+else
+    # use port 80 if this build allows using sudo
+    sed -i "s|listen\s*3000;|listen 80;|g" "$DIR/piwik_nginx.conf"
+    sudo nginx -c "$DIR/piwik_nginx.conf"
+fi
