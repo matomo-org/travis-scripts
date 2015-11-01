@@ -18,7 +18,7 @@ then
 fi
 
 # quick fix for https://github.com/piwik/travis-scripts/issues/15
-git checkout master ./tests/PHPUnit/config.ini.travis.php
+git checkout master -- ./tests/PHPUnit/config.ini.travis.php
 
 # Copy Piwik configuration
 echo "Install config.ini.php"
