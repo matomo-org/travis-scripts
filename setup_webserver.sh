@@ -65,6 +65,7 @@ if grep "sudo: false" "$TRAVIS_BUILD_DIR/.travis.yml"; then
 else
     # use port 80 if this build allows using sudo
     sed -i "s|listen\s*3000;|listen 80;|g" "$DIR/piwik_nginx.conf"
+    sed -i "S|port\s*=\s*3000||g" "$PIWIK_ROOT/config/config.ini.php"
     echo "user www-data;" | cat - "$DIR/piwik_nginx.conf" > .tmpconf && mv .tmpconf "$DIR/piwik_nginx.conf"
 
     sudo chown www-data:www-data "$PHP_FPM_SOCK"
