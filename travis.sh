@@ -8,9 +8,6 @@ source $SCRIPT_DIR/travis-helper.sh
 # go to tests directory
 cd ../PHPUnit
 
-# quick fix for https://github.com/piwik/travis-scripts/issues/15
-git checkout master ./config.ini.travis.php
-
 if [ -n "$TEST_SUITE" ]
 then
     echo "Executing tests in test suite $TEST_SUITE..."
