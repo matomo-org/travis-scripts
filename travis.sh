@@ -23,7 +23,12 @@ then
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
     then
         touch ../javascript/enable_sqlite
-        phantomjs ../javascript/testrunner.js "http://localhost:3000/tests/javascript/"
+
+        if grep "sudo: false" "$TRAVIS_BUILD_DIR/.travis.yml"; then
+            phantomjs ../javascript/testrunner.js "http://localhost:3000/tests/javascript/"
+        else
+            phantomjs ../javascript/testrunner.js "http://localhost/tests/javascript/"
+        fi
     elif [ "$TEST_SUITE" = "UITests" ]
     then
         if [ -n "$PLUGIN_NAME" ]
