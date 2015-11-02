@@ -18,7 +18,8 @@ then
 fi
 
 # quick fix for https://github.com/piwik/travis-scripts/issues/15
-git checkout master -- ./tests/PHPUnit/config.ini.travis.php
+# can't use git checkout since travis uses shallow clones. which are non-trivial to unshallow
+curl 'https://raw.githubusercontent.com/piwik/piwik/master/tests/PHPUnit/config.ini.travis.php' > ./tests/PHPUnit/config.ini.travis.php
 
 # Copy Piwik configuration
 echo "Install config.ini.php"
