@@ -22,7 +22,6 @@ then
         ./../angularjs/scripts/travis.sh
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
     then
-        touch ../javascript/enable_sqlite
 
         if grep "sudo: false" "$TRAVIS_BUILD_DIR/.travis.yml"; then
             phantomjs ../javascript/testrunner.js "http://localhost:3000/tests/javascript/"
