@@ -78,6 +78,9 @@ then
     elif [ "$TEST_SUITE" = "AllTests" ]
     then
         travis_wait ./../../console tests:run --options="--colors"
+    elif [ "$TEST_SUITE" = "PluginQualityTests" ]
+    then
+        travis_wait phpunit ./../tests/plugin_qa/PluginQualityTest.php
     else
         if [ -n "$PLUGIN_NAME" ]
         then
