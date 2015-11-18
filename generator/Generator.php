@@ -18,6 +18,8 @@ abstract class Generator
     const DEFAULT_MINIMUM_PHP_VERSION_TO_TEST = '5.3.3';
     const DEFAULT_MAXIMUM_PHP_VERSION_TO_TEST = '5.6';
 
+    private static $knownMinorPhpVersionsOnTravis = array('5.3.3');
+
     /**
      * @var string[]
      */
@@ -126,7 +128,8 @@ abstract class Generator
         $this->view->setGenerateYmlCommand($thisConsoleCommand);
 
         if (!empty($this->phpVersions)) {
-            $this->view->setPhpVersions($this->phpVersions);
+            $phpVersions = $this->getPhpVersionsKnownToExistOnTravis();
+            $this->view->setPhpVersions($phpVersions);
         }
 
         $outputYmlPath = $this->getTravisYmlOutputPath();
@@ -254,5 +257,25 @@ abstract class Generator
         $phpVersions = $this->phpVersions;
         usort($phpVersions, 'version_compare');
         $this->minimumPhpVersion = reset($phpVersions);
+    }
+
+    private function getPhpVersionsKnownToExistOnTravis()
+    {
+        $self = $this;
+        return array_map(function ($version) use ($self) {
+            if (in_array($version, Generator::$knownMinorPhpVersionsOnTravis)
+                || substr_count($version, ".") < 2
+            ) {
+                return $version;
+            } else {
+                $parts = explode('.', $version, 3);
+                $parts = array($parts[0], $parts[1]);
+                $versionWithoutPatch =  implode('.', $parts);
+
+                $self->log("info", "Version '$version' is not known to be available on travis, using '$versionWithoutPatch'.");
+
+                return $versionWithoutPatch;
+            }
+        }, $this->phpVersions);
     }
 }
