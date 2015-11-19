@@ -174,6 +174,40 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
             "Version in plugin.json does not match version in composer.json.");
     }
 
+    public function test_PluginDotJsonFile_HasCorrectFields_IfPluginIsOpenSource()
+    {
+        if ($this->getRepoOwner() != "piwik") {
+            return;
+        }
+
+        $this->assertArrayHasKey("homepage", $this->pluginJsonContents);
+        $this->assertEquals("http://plugins.piwik.org/" . $this->pluginName, $this->pluginJsonContents["homepage"]);
+
+        $this->assertArrayHasKey("authors", $this->pluginJsonContents);
+        $this->assertEquals(array("name" => "Piwik", "email" => "hello@piwik.org", "homepage" => "http://piwik.org"),
+            $this->pluginJsonContents["authors"]);
+
+        $this->assertArrayHasKey("license", $this->pluginJsonContents);
+        $this->assertEquals("GPL v3+", $this->pluginJsonContents["license"]);
+    }
+
+    public function test_PluginDotJsonFile_HasCorrectFields_IfPluginIsClosedSource()
+    {
+        if ($this->getRepoOwner() != "piwikpro") {
+            return;
+        }
+
+        $this->assertArrayHasKey("homepage", $this->pluginJsonContents);
+        $this->assertEquals("https://piwik.pro/plugins", $this->pluginJsonContents["homepage"]);
+
+        $this->assertArrayHasKey("authors", $this->pluginJsonContents);
+        $this->assertEquals(array("name" => "Piwik PRO", "email" => "contact@piwik.pro", "homepage" => "https://piwik.pro"),
+            $this->pluginJsonContents["authors"]);
+
+        $this->assertArrayHasKey("license", $this->pluginJsonContents);
+        $this->assertEquals("Paid plugin", $this->pluginJsonContents["license"]);
+    }
+
     private function getPluginTestsDirectory()
     {
         $possibleDirs = array(
@@ -261,5 +295,11 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         $repoInfo = file_get_contents($repoUrl, null, $context);
 
         return $repoInfo["description"];
+    }
+
+    private function getRepoOwner()
+    {
+        $parts = explode("/", $this->pluginSlug);
+        return $parts[0];
     }
 }
