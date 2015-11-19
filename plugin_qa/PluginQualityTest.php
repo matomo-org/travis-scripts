@@ -19,6 +19,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
 
     private $pluginName;
     private $pluginDir;
+    private $pluginFiles;
     private $pluginHasUIFiles;
     private $pluginHasNonUIFiles;
 
@@ -34,9 +35,9 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
             throw new Exception("Cannot find plugin directory at '{$this->pluginDir}'.");
         }
 
-        $pluginFiles = $this->getPluginCodeFiles();
-        $this->pluginHasUIFiles = $this->hasUIFiles($pluginFiles);
-        $this->pluginHasNonUIFiles = $this->hasNonUIFiles($pluginFiles);
+        $this->pluginFiles = $this->getPluginCodeFiles();
+        $this->pluginHasUIFiles = $this->hasUIFiles();
+        $this->pluginHasNonUIFiles = $this->hasNonUIFiles();
     }
 
     public function test_Plugin_HasIntegrationAndSystemTests_IfNonUIFilesExist()
@@ -73,6 +74,22 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         $this->assertGreaterThan(0, $numberOfUITests, "Plugin has 0 UI tests.");
     }
 
+    public function test_Plugin_HasAtLeastOneScreenshot_IfUIFilesExist()
+    {
+        if (!$this->pluginHasUIFiles) {
+            return;
+        }
+
+        $screenshotFileCount = 0;
+        foreach ($this->pluginFiles as $file) {
+            if (preg_match('/\/screenshots\/.*\.(png|jpeg)$/', $file)) {
+                ++$screenshotFileCount;
+            }
+        }
+
+        $this->assertGreaterThan(0, $screenshotFileCount, "Plugin has UI files but no screenshots.");
+    }
+
     private function getPluginTestsDirectory()
     {
         $possibleDirs = array(
@@ -100,16 +117,6 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         return $count;
     }
 
-    private function hasNonUIFiles($pluginFiles)
-    {
-        foreach ($pluginFiles as $file) {
-            if (!$this->isUIFile($file)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private function getPluginCodeFiles()
     {
         $result = array();
@@ -130,9 +137,19 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         return $result;
     }
 
-    private function hasUIFiles($pluginFiles)
+    private function hasNonUIFiles()
     {
-        foreach ($pluginFiles as $file) {
+        foreach ($this->pluginFiles as $file) {
+            if (!$this->isUIFile($file)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function hasUIFiles()
+    {
+        foreach ($this->pluginFiles as $file) {
             if ($this->isUIFile($file)) {
                 return true;
             }
