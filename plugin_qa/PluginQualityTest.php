@@ -12,8 +12,15 @@
  */
 class PluginQualityTest extends PHPUnit_Framework_TestCase
 {
+    private static $knownUIPhpFiles = array(
+        "/Controller.php",
+        "/Menu.php",
+    );
+
     private $pluginName;
     private $pluginDir;
+    private $pluginHasUIFiles;
+    private $pluginHasNonUIFiles;
 
     public function setUp()
     {
@@ -26,10 +33,18 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         if (!is_dir($this->pluginDir)) {
             throw new Exception("Cannot find plugin directory at '{$this->pluginDir}'.");
         }
+
+        $pluginFiles = $this->getPluginCodeFiles();
+        $this->pluginHasUIFiles = $this->hasUIFiles($pluginFiles);
+        $this->pluginHasNonUIFiles = $this->hasNonUIFiles($pluginFiles);
     }
 
-    public function test_Plugin_HasIntegrationSystemAndUITests()
+    public function test_Plugin_HasIntegrationAndSystemTests_IfNonUIFilesExist()
     {
+        if (!$this->pluginHasNonUIFiles) {
+            return;
+        }
+
         // TODO: check for unit tests?
         $testsDir = $this->getPluginTestsDirectory();
         if (empty($testsDir)) {
@@ -40,6 +55,18 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         foreach ($phpTestTypes as $type) {
             $numberOfTests = $this->getDirectoryFileCount($testsDir . '/' . $type, '/Test\.php$/');
             $this->assertGreaterThan(0, $numberOfTests, "Plugin has 0 $type tests.");
+        }
+    }
+
+    public function test_Plugin_HasUITests_IfUIFilesExist()
+    {
+        if (!$this->pluginHasUIFiles) {
+            return;
+        }
+
+        $testsDir = $this->getPluginTestsDirectory();
+        if (empty($testsDir)) {
+            $this->fail("Plugin has no tests.");
         }
 
         $numberOfUITests = $this->getDirectoryFileCount($testsDir . '/UI', '/_spec\.js$/');
@@ -71,5 +98,51 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
             }
         }
         return $count;
+    }
+
+    private function hasNonUIFiles($pluginFiles)
+    {
+        foreach ($pluginFiles as $file) {
+            if (!$this->isUIFile($file)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function getPluginCodeFiles()
+    {
+        $result = array();
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($this->pluginDir), RecursiveIteratorIterator::LEAVES_ONLY);
+
+        /** @var SplFileInfo $file */
+        foreach ($iterator as $file) {
+            $filePath = $file->getPath() . '/' . $file->getBasename();
+            if (preg_match('/\.(php|js|twig|less)$/', $filePath)
+                && !preg_match('/\/tests|Test\//', $filePath)
+            ) {
+                $result[] = str_replace($this->pluginDir, "", $filePath);
+            }
+        }
+
+        return $result;
+    }
+
+    private function hasUIFiles($pluginFiles)
+    {
+        foreach ($pluginFiles as $file) {
+            if ($this->isUIFile($file)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function isUIFile($file)
+    {
+        return preg_match('/\.(js|twig|less)$/', $file)
+            || in_array($file, self::$knownUIPhpFiles);
     }
 }
