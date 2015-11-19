@@ -22,12 +22,24 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     private $pluginFiles;
     private $pluginHasUIFiles;
     private $pluginHasNonUIFiles;
+    private $pluginSlug;
+    private $githubToken;
 
     public function setUp()
     {
         $this->pluginName = getenv('PLUGIN_NAME');
-        if ($this->pluginName === false) {
-            throw new Exception("PLUGIN_NAME environment is not set, do not know which plugin to run tests against.");
+        if (empty($this->pluginName)) {
+            throw new Exception("PLUGIN_NAME environment variable is not set, do not know which plugin to run tests against.");
+        }
+
+        $this->githubToken = getenv('GITHUB_USER_TOKEN');
+        if (empty($this->githubToken)) {
+            throw new Exception("GITHUB_USER_TOKEN environment variable is not set, cannot run some tests.");
+        }
+
+        $this->pluginSlug = getenv('TRAVIS_REPO_SLUG');
+        if (empty($this->pluginSlug)) {
+            throw new Exception("TRAVIS_REPO_SLUG environment variable is not set. Needed for github tests.");
         }
 
         $this->pluginDir = __DIR__ . '/../../../plugins/' . $this->pluginName;
@@ -88,6 +100,12 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertGreaterThan(0, $screenshotFileCount, "Plugin has UI files but no screenshots.");
+    }
+
+    public function test_GithubRepo_HasDescriptionSet()
+    {
+        $repoDescription = $this->getPluginRepoDescription();
+        $this->assertNotEmpty($repoDescription);
     }
 
     private function getPluginTestsDirectory()
@@ -161,5 +179,21 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     {
         return preg_match('/\.(js|twig|less)$/', $file)
             || in_array($file, self::$knownUIPhpFiles);
+    }
+
+    private function getPluginRepoDescription()
+    {
+        $repoUrl = "https://api.github.com/repos/{$this->pluginSlug}";
+        $authHeader = "Authorization: Basic " . base64_encode(":" . $this->githubToken) . "\r\n";
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => $authHeader
+            ),
+        ));
+        $repoInfo = file_get_contents($repoUrl, null, $context);
+
+        return $repoInfo["description"];
     }
 }
