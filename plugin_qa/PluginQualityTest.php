@@ -24,6 +24,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     private $pluginHasNonUIFiles;
     private $pluginSlug;
     private $githubToken;
+    private $pluginJsonContents;
 
     public function setUp()
     {
@@ -50,6 +51,17 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         $this->pluginFiles = $this->getPluginCodeFiles();
         $this->pluginHasUIFiles = $this->hasUIFiles();
         $this->pluginHasNonUIFiles = $this->hasNonUIFiles();
+
+        $pluginJsonPath = $this->pluginDir . '/plugin.json';
+        if (!file_exists($pluginJsonPath)) {
+            throw new Exception("plugin.json does not exist");
+        }
+
+        $pluginJsonContents = file_get_contents($pluginJsonPath);
+        $pluginJsonContents = json_decode($pluginJsonContents, $assoc = true);
+        if (empty($pluginJsonContents)) {
+            throw new Exception("plugin.json is either empty or invalid JSON");
+        }
     }
 
     public function test_Plugin_HasIntegrationAndSystemTests_IfNonUIFilesExist()
@@ -102,14 +114,9 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         $this->assertGreaterThan(0, $screenshotFileCount, "Plugin has UI files but no screenshots.");
     }
 
-    public function test_PluginDotJsonFile_HasProperFields_AndHasDescriptionMatchingGithubDesc()
+    public function test_PluginDotJsonFile_HasDescriptionMatchingGithubDesc()
     {
-        $pluginJsonPath = $this->pluginDir . '/plugin.json';
-        $this->assertTrue(file_exists($pluginJsonPath), "plugin.json does not exist");
-
-        $pluginJsonContents = file_get_contents($pluginJsonPath);
-        $pluginJsonContents = json_decode($pluginJsonContents, $assoc = true);
-        $this->assertNotEmpty($pluginJsonContents, "plugin.json is either empty or invalid JSON");
+        $pluginJsonContents = $this->pluginJsonContents;
 
         $this->assertArrayHasKey("description", $pluginJsonContents);
 
@@ -121,6 +128,30 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($repoDescription, $pluginJsonDescription,
             "Plugin description in plugin.json does not match github repo description.");
+    }
+
+    public function test_PluginDotJsonFile_HasPluginName_ThatMatchesPluginNamespace()
+    {
+        $this->assertArrayHasKey($this->pluginJsonContents, "name");
+
+        $pluginName = $this->pluginJsonContents["name"];
+        $this->assertEquals($this->pluginName, $pluginName,
+            "Plugin name in plugin.json does not match PLUGIN_NAME env var in travis.");
+
+        foreach ($this->pluginFiles as $file) {
+            if (!preg_match('/\.php$/', $file)) {
+                continue;
+            }
+
+            $fileContents = file_get_contents($this->pluginDir . '/' . $file);
+            if (!preg_match('/^namespace\s*Piwik\Plugins\([^\;\s]+)/', $fileContents, $matches)) {
+                continue;
+            }
+
+            $namespacePluginName = $matches[1];
+            $this->assertEquals($pluginName, $namespacePluginName,
+                "Plugin name in namespace in file '$file' does not match plugin name in plugin.json.");
+        }
     }
 
     private function getPluginTestsDirectory()
@@ -161,7 +192,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         foreach ($iterator as $file) {
             $filePath = $file->getPath() . '/' . $file->getBasename();
             if (preg_match('/\.(php|js|twig|less)$/', $filePath)
-                && !preg_match('/\/tests|Test\//', $filePath)
+                && !preg_match('/\/tests|Test|vendor\//', $filePath)
             ) {
                 $result[] = str_replace($this->pluginDir, "", $filePath);
             }
