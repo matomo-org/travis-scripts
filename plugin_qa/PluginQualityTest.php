@@ -102,10 +102,25 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         $this->assertGreaterThan(0, $screenshotFileCount, "Plugin has UI files but no screenshots.");
     }
 
-    public function test_GithubRepo_HasDescriptionSet()
+    public function test_PluginDotJsonFile_HasProperFields_AndHasDescriptionMatchingGithubDesc()
     {
+        $pluginJsonPath = $this->pluginDir . '/plugin.json';
+        $this->assertTrue(file_exists($pluginJsonPath), "plugin.json does not exist");
+
+        $pluginJsonContents = file_get_contents($pluginJsonPath);
+        $pluginJsonContents = json_decode($pluginJsonContents, $assoc = true);
+        $this->assertNotEmpty($pluginJsonContents, "plugin.json is either empty or invalid JSON");
+
+        $this->assertArrayHasKey("description", $pluginJsonContents);
+
+        $pluginJsonDescription = $pluginJsonContents["description"];
+        $this->assertNotContains("TODO", $pluginJsonDescription);
+
         $repoDescription = $this->getPluginRepoDescription();
         $this->assertNotEmpty($repoDescription);
+
+        $this->assertEquals($repoDescription, $pluginJsonDescription,
+            "Plugin description in plugin.json does not match github repo description.");
     }
 
     private function getPluginTestsDirectory()
