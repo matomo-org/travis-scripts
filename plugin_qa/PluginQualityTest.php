@@ -154,6 +154,26 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function test_PluginDotJsonFile_HasPluginVersion_ThatMatchesComposerDotJsonVersion()
+    {
+        $this->assertArrayHasKey($this->pluginJsonContents, "version");
+
+        $composerJsonPath = $this->pluginDir . '/composer.json';
+        if (!file_exists($composerJsonPath)) {
+            return;
+        }
+
+        $composerJsonContents = file_get_contents($composerJsonPath);
+        $composerJsonContents = json_decode($composerJsonContents, $assoc = false);
+        if (empty($composerJsonContents)) {
+            throw new Exception("composer.json file is either empty or invalid JSON");
+        }
+
+        $this->assertArrayHasKey($composerJsonContents, "version");
+        $this->assertEquals($this->pluginJsonContents["version"], $composerJsonContents["version"],
+            "Version in plugin.json does not match version in composer.json.");
+    }
+
     private function getPluginTestsDirectory()
     {
         $possibleDirs = array(
