@@ -24,6 +24,7 @@ class TravisYmlView
      */
     private static $travisYmlSectionNames = array(
         'php',
+        'group',
         'services',
         'language',
         'script',
