@@ -12,6 +12,22 @@
  */
 class PluginQualityTest extends PHPUnit_Framework_TestCase
 {
+    const PRO_HEADER_COMMENT = '/**
+ * Copyright (C) Piwik PRO - All rights reserved.
+ *
+ * Using this code requires that you first get a license from Piwik PRO.
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ *
+ * @link http://piwik.pro
+ */';
+
+    const OPEN_SOURCE_HEADER_COMMENT = '/**
+ * Piwik - free/libre analytics platform
+ *
+ * @link http://piwik.org
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
+ */';
+
     private static $knownUIPhpFiles = array(
         "/Controller.php",
         "/Menu.php",
@@ -208,6 +224,24 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("Paid plugin", $this->pluginJsonContents["license"]);
     }
 
+    public function test_PluginPhpFiles_HaveProperCommentHeader()
+    {
+        $expectedHeader = $this->getExpectedPluginHeader();
+
+        foreach ($this->getPluginCodeFiles('.php') as $file) {
+            $this->assertPhpFileHasHeader($expectedHeader, $file);
+        }
+    }
+
+    public function test_PluginJsFiles_HaveProperCommentHeader()
+    {
+        $expectedHeader = $this->getExpectedPluginHeader();
+
+        foreach ($this->getPluginCodeFiles('.js') as $file) {
+            $this->assertJsFileHasHeader($expectedHeader, $file);
+        }
+    }
+
     private function getPluginTestsDirectory()
     {
         $possibleDirs = array(
@@ -235,7 +269,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         return $count;
     }
 
-    private function getPluginCodeFiles()
+    private function getPluginCodeFiles($extension = null)
     {
         $result = array();
 
@@ -245,11 +279,19 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
             $filePath = $file->getPath() . '/' . $file->getBasename();
-            if (preg_match('/\.(php|js|twig|less)$/', $filePath)
-                && !preg_match('/\/tests|Test|vendor\//', $filePath)
+            if (!preg_match('/\.(php|js|twig|less)$/', $filePath)
+                || preg_match('/\/tests|Test|vendor\//', $filePath)
             ) {
-                $result[] = str_replace($this->pluginDir, "", $filePath);
+                continue;
             }
+
+            if ($extension !== null
+                && !preg_match('/' . preg_quote($extension) . '$/', $filePath)
+            ) {
+                continue;
+            }
+
+            $result[] = str_replace($this->pluginDir, "", $filePath);
         }
 
         return $result;
@@ -301,5 +343,26 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     {
         $parts = explode("/", $this->pluginSlug);
         return $parts[0];
+    }
+
+    private function getExpectedPluginHeader()
+    {
+        if ($this->getRepoOwner() == 'piwikpro') {
+            return self::PRO_HEADER_COMMENT;
+        } else {
+            return self::OPEN_SOURCE_HEADER_COMMENT;
+        }
+    }
+
+    private function assertPhpFileHasHeader($expectedHeader, $file)
+    {
+        $fileContents = file_get_contents($file);
+        $this->assertStringStartsWith("<?php\n" . $expectedHeader, $fileContents);
+    }
+
+    private function assertJsFileHasHeader($expectedHeader, $file)
+    {
+        $fileContents = file_get_contents($file);
+        $this->assertStringStartsWith($expectedHeader, $fileContents);
     }
 }
