@@ -50,9 +50,6 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         }
 
         $this->githubToken = getenv('GITHUB_USER_TOKEN');
-        if (empty($this->githubToken)) {
-            throw new Exception("GITHUB_USER_TOKEN environment variable is not set, cannot run some tests.");
-        }
 
         $this->pluginSlug = getenv('TRAVIS_REPO_SLUG');
         if (empty($this->pluginSlug)) {
@@ -326,7 +323,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     private function getPluginRepoDescription()
     {
         $repoUrl = "https://api.github.com/repos/{$this->pluginSlug}";
-        $authHeader = "Authorization: Basic " . base64_encode(":" . $this->githubToken) . "\r\n";
+        $authHeader = "Authorization: Basic " . base64_encode(":" . $this->getGithubToken()) . "\r\n";
 
         $context = stream_context_create(array(
             'http' => array(
@@ -364,5 +361,12 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     {
         $fileContents = file_get_contents($file);
         $this->assertStringStartsWith($expectedHeader, $fileContents);
+    }
+
+    private function getGithubToken()
+    {
+        if (empty($this->githubToken)) {
+            throw new Exception("GITHUB_USER_TOKEN environment variable is not set, cannot run some tests.");
+        }
     }
 }
