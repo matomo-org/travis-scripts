@@ -41,6 +41,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     private $pluginSlug;
     private $githubToken;
     private $pluginJsonContents;
+    private $pluginUsesGitFlow;
 
     public function setUp()
     {
@@ -254,7 +255,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     public function test_PluginReadme_HasRequiredSection($sectionName)
     {
         $pluginReadme = $this->getPluginReadme();
-        $this->assertRegExp('/\n\s*#*\s*' . preg_quote($sectionName) . '/i', $pluginReadme);
+        $this->assertRegExp('/^#*\s*' . preg_quote($sectionName) . '/i', $pluginReadme);
     }
 
     public function getPluginReadmeRequiredSections()
@@ -274,6 +275,27 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         if ($this->pluginUsesGitFlow) {
             $this->assertHasBuildBadge('develop', $pluginReadme);
         }
+    }
+
+    public function test_PluginReadme_HasCorrectSupportSection()
+    {
+        $pluginReadme = $this->getPluginReadme();
+
+        // get support section
+        if (!preg_match('/^#*\s*Support(.*?)(?:(?:\n#)|$)/i', $pluginReadme, $matches)) {
+            throw new \Exception("Cannot find Support section in plugin README.md.");
+        }
+
+        $supportSection = $matches[1];
+
+        if ($this->getRepoOwner() == 'piwikpro') {
+            $this->assertSupportSectionContainsPiwikProEmail($supportSection);
+        } else {
+            $this->assertSupportSectionLinksToIssueTracker($supportSection);
+        }
+
+        $requiredSupportSectionStatement = 'We welcome your feedback about this plugin. Please report bugs or suggest enhancements at';
+        $this->assertContains($requiredSupportSectionStatement, $supportSection);
     }
 
     private function getPluginTestsDirectory()
@@ -428,5 +450,16 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         $command = "cd \"{$this->pluginDir}\" git rev-parse --verify develop > /dev/null 2> /dev/null";
         system($command, $returnCode);
         return $returnCode;
+    }
+
+    private function assertSupportSectionContainsPiwikProEmail($supportSection)
+    {
+        $this->assertContains('support@piwik.pro', $supportSection);
+    }
+
+    private function assertSupportSectionLinksToIssueTracker($supportSection)
+    {
+        $issueTracker = 'https://github.com/' . $this->pluginSlug . '/issues';
+        $this->assertContains($issueTracker, $supportSection);
     }
 }
