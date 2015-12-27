@@ -75,6 +75,8 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         if (empty($pluginJsonContents)) {
             throw new Exception("plugin.json is either empty or invalid JSON");
         }
+
+        $this->pluginUsesGitFlow = $this->checkIfPluginUsesGitFlow();
     }
 
     public function test_Plugin_HasIntegrationAndSystemTests_IfNonUIFilesExist()
@@ -264,6 +266,16 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function test_PluginReadme_HasCorrectTravisBuildBadges()
+    {
+        $pluginReadme = $this->getPluginReadme();
+        $this->assertHasBuildBadge('master', $pluginReadme);
+
+        if ($this->pluginUsesGitFlow) {
+            $this->assertHasBuildBadge('develop', $pluginReadme);
+        }
+    }
+
     private function getPluginTestsDirectory()
     {
         $possibleDirs = array(
@@ -403,5 +415,18 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     private function getPluginReadme()
     {
         return file_get_contents($this->getPluginReadmePath());
+    }
+
+    private function assertHasBuildBadge($branch, $pluginReadme)
+    {
+        $regex = '/!\[[^]]+\]\(https://.*?' . preg_quote($this->pluginSlug) . '\.png?.*?branch=' . preg_quote($branch) . '\)/';
+        $this->assertRegExp($regex, $pluginReadme, "Plugin README is missing travis build badge for branch '$branch'.");
+    }
+
+    private function checkIfPluginUsesGitFlow()
+    {
+        $command = "cd \"{$this->pluginDir}\" git rev-parse --verify develop > /dev/null 2> /dev/null";
+        system($command, $returnCode);
+        return $returnCode;
     }
 }
