@@ -239,6 +239,31 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function test_PluginReadme_Exists()
+    {
+        $pluginReadmePath = $this->getPluginReadmePath();
+        $this->assertFileExists($pluginReadmePath);
+    }
+
+    /**
+     * @depends test_PluginReadme_Exists
+     * @dataProvider getPluginReadmeRequiredSections
+     */
+    public function test_PluginReadme_HasRequiredSection($sectionName)
+    {
+        $pluginReadme = $this->getPluginReadme();
+        $this->assertRegExp('/\n\s*#*\s*' . preg_quote($sectionName) . '/i', $pluginReadme);
+    }
+
+    public function getPluginReadmeRequiredSections()
+    {
+        return array(
+            array('description'),
+            array('changelog'),
+            array('support'),
+        );
+    }
+
     private function getPluginTestsDirectory()
     {
         $possibleDirs = array(
@@ -368,5 +393,15 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         if (empty($this->githubToken)) {
             throw new Exception("GITHUB_USER_TOKEN environment variable is not set, cannot run some tests.");
         }
+    }
+
+    private function getPluginReadmePath()
+    {
+        return $this->pluginDir . '/README.md';
+    }
+
+    private function getPluginReadme()
+    {
+        return file_get_contents($this->getPluginReadmePath());
     }
 }
