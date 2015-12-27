@@ -14,7 +14,7 @@ then
 else
     if [ "$TEST_SUITE" = "UITests" ];
     then
-        url_base="http://builds-artifacts.piwik.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&build_id=$TRAVIS_BUILD_NUMBER&branch=$TRAVIS_BRANCH"
+        url_base="http://builds-artifacts.piwik.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&build_id=$TRAVIS_BUILD_NUMBER&build_entity_id=$TRAVIS_BUILD_ID&branch=$TRAVIS_BRANCH"
 
         if [ -n "$PLUGIN_NAME" ];
         then
