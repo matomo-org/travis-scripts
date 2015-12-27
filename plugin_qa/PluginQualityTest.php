@@ -57,7 +57,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
             throw new Exception("TRAVIS_REPO_SLUG environment variable is not set. Needed for github tests.");
         }
 
-        $this->pluginDir = __DIR__ . '/../../../plugins/' . $this->pluginName;
+        $this->pluginDir = realpath(__DIR__ . '/../../../plugins/' . $this->pluginName);
         if (!is_dir($this->pluginDir)) {
             throw new Exception("Cannot find plugin directory at '{$this->pluginDir}'.");
         }
@@ -76,6 +76,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         if (empty($pluginJsonContents)) {
             throw new Exception("plugin.json is either empty or invalid JSON");
         }
+        $this->pluginJsonContents = $pluginJsonContents;
 
         $this->pluginUsesGitFlow = $this->checkIfPluginUsesGitFlow();
     }
@@ -122,7 +123,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
 
         $screenshotFileCount = 0;
         foreach ($this->pluginFiles as $file) {
-            if (preg_match('/\/screenshots\/.*\.(png|jpeg)$/', $file)) {
+            if (preg_match('/screenshots\/.*\.(png|jpeg)$/', $file)) {
                 ++$screenshotFileCount;
             }
         }
@@ -148,7 +149,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
 
     public function test_PluginDotJsonFile_HasPluginName_ThatMatchesPluginNamespace()
     {
-        $this->assertArrayHasKey($this->pluginJsonContents, "name");
+        $this->assertArrayHasKey("name", $this->pluginJsonContents);
 
         $pluginName = $this->pluginJsonContents["name"];
         $this->assertEquals($this->pluginName, $pluginName,
@@ -160,7 +161,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
             }
 
             $fileContents = file_get_contents($this->pluginDir . '/' . $file);
-            if (!preg_match('/^namespace\s*Piwik\Plugins\([^\;\s]+)/', $fileContents, $matches)) {
+            if (!preg_match('/^namespace\s*Piwik\\\\Plugins\\\\([^\\\\;\s]+)/', $fileContents, $matches)) {
                 continue;
             }
 
@@ -172,7 +173,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
 
     public function test_PluginDotJsonFile_HasPluginVersion_ThatMatchesComposerDotJsonVersion()
     {
-        $this->assertArrayHasKey($this->pluginJsonContents, "version");
+        $this->assertArrayHasKey("version", $this->pluginJsonContents);
 
         $composerJsonPath = $this->pluginDir . '/composer.json';
         if (!file_exists($composerJsonPath)) {
@@ -180,12 +181,12 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         }
 
         $composerJsonContents = file_get_contents($composerJsonPath);
-        $composerJsonContents = json_decode($composerJsonContents, $assoc = false);
+        $composerJsonContents = json_decode($composerJsonContents, $assoc = true);
         if (empty($composerJsonContents)) {
             throw new Exception("composer.json file is either empty or invalid JSON");
         }
 
-        $this->assertArrayHasKey($composerJsonContents, "version");
+        $this->assertArrayHasKey("version", $composerJsonContents);
         $this->assertEquals($this->pluginJsonContents["version"], $composerJsonContents["version"],
             "Version in plugin.json does not match version in composer.json.");
     }
@@ -227,19 +228,13 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     public function test_PluginPhpFiles_HaveProperCommentHeader()
     {
         $expectedHeader = $this->getExpectedPluginHeader();
-
-        foreach ($this->getPluginCodeFiles('.php') as $file) {
-            $this->assertPhpFileHasHeader($expectedHeader, $file);
-        }
+        $this->assertPhpFilesHaveHeader($expectedHeader, $this->getPluginCodeFilesOfType('.php'));
     }
 
     public function test_PluginJsFiles_HaveProperCommentHeader()
     {
         $expectedHeader = $this->getExpectedPluginHeader();
-
-        foreach ($this->getPluginCodeFiles('.js') as $file) {
-            $this->assertJsFileHasHeader($expectedHeader, $file);
-        }
+        $this->assertFilesHaveHeader($expectedHeader, $this->getPluginCodeFilesOfType('.js'));
     }
 
     public function test_PluginReadme_Exists()
@@ -255,7 +250,11 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     public function test_PluginReadme_HasRequiredSection($sectionName)
     {
         $pluginReadme = $this->getPluginReadme();
-        $this->assertRegExp('/^#*\s*' . preg_quote($sectionName) . '/i', $pluginReadme);
+
+        $regex = '/^#+\s*' . preg_quote($sectionName) . '/im';
+        if (!preg_match($regex, $pluginReadme)) {
+            $this->fail("Plugin README.md is missing required section '$sectionName'.");
+        }
     }
 
     public function getPluginReadmeRequiredSections()
@@ -282,7 +281,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         $pluginReadme = $this->getPluginReadme();
 
         // get support section
-        if (!preg_match('/^#*\s*Support(.*?)(?:(?:\n#)|$)/i', $pluginReadme, $matches)) {
+        if (!preg_match('/#+\s*Support(.*)(?=(?:\n#)|$)/is', $pluginReadme, $matches)) {
             throw new \Exception("Cannot find Support section in plugin README.md.");
         }
 
@@ -316,6 +315,10 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
 
     private function getDirectoryFileCount($directory, $regex)
     {
+        if (!is_dir($directory)) {
+            return 0;
+        }
+
         $count = 0;
         foreach (scandir($directory) as $file) {
             if (preg_match($regex, $file)) {
@@ -325,7 +328,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         return $count;
     }
 
-    private function getPluginCodeFiles($extension = null)
+    private function getPluginCodeFiles()
     {
         $result = array();
 
@@ -335,19 +338,14 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
             $filePath = $file->getPath() . '/' . $file->getBasename();
-            if (!preg_match('/\.(php|js|twig|less)$/', $filePath)
+
+            if (!preg_match('/\.(php|js|twig|less|png|jpeg)$/', $filePath)
                 || preg_match('/\/tests|Test|vendor\//', $filePath)
             ) {
                 continue;
             }
 
-            if ($extension !== null
-                && !preg_match('/' . preg_quote($extension) . '$/', $filePath)
-            ) {
-                continue;
-            }
-
-            $result[] = str_replace($this->pluginDir, "", $filePath);
+            $result[] = str_replace($this->pluginDir . "/", "", $filePath);
         }
 
         return $result;
@@ -398,7 +396,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     private function getRepoOwner()
     {
         $parts = explode("/", $this->pluginSlug);
-        return $parts[0];
+        return strtolower($parts[0]);
     }
 
     private function getExpectedPluginHeader()
@@ -410,16 +408,28 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    private function assertPhpFileHasHeader($expectedHeader, $file)
+    private function assertPhpFilesHaveHeader($expectedHeader, $files)
     {
-        $fileContents = file_get_contents($file);
-        $this->assertStringStartsWith("<?php\n" . $expectedHeader, $fileContents);
+        $expectedHeader = "<?php\n" . $expectedHeader;
+        $this->assertFilesHaveHeader($expectedHeader, $files);
     }
 
-    private function assertJsFileHasHeader($expectedHeader, $file)
+    private function assertFilesHaveHeader($expectedHeader, $files)
     {
-        $fileContents = file_get_contents($file);
-        $this->assertStringStartsWith($expectedHeader, $fileContents);
+        $filesWithoutHeader = array();
+
+        foreach ($files as $file) {
+            $fileContents = file_get_contents($file);
+            if (substr($fileContents, 0, strlen($expectedHeader)) != $expectedHeader) {
+                $filesWithoutHeader[] = $file;
+            }
+        }
+
+        if (!empty($filesWithoutHeader)) {
+            $failMessage = "The following files are missing the correct copyright header:\n";
+            $failMessage .= "- " . implode("\n- ", $filesWithoutHeader);
+            $this->fail($failMessage);
+        }
     }
 
     private function getGithubToken()
@@ -441,7 +451,7 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
 
     private function assertHasBuildBadge($branch, $pluginReadme)
     {
-        $regex = '/!\[[^]]+\]\(https://.*?' . preg_quote($this->pluginSlug) . '\.png?.*?branch=' . preg_quote($branch) . '\)/';
+        $regex = '%!\[[^]]+\]\(https:\/\/.*?' . preg_quote($this->pluginSlug) . '\.png?.*?branch=' . preg_quote($branch) . '\)%';
         $this->assertRegExp($regex, $pluginReadme, "Plugin README is missing travis build badge for branch '$branch'.");
     }
 
@@ -461,5 +471,20 @@ class PluginQualityTest extends PHPUnit_Framework_TestCase
     {
         $issueTracker = 'https://github.com/' . $this->pluginSlug . '/issues';
         $this->assertContains($issueTracker, $supportSection);
+    }
+
+    private function getPluginCodeFilesOfType($extension = null)
+    {
+        $result = array();
+        foreach ($this->pluginFiles as $filePath) {
+            if ($extension !== null
+                && !preg_match('/' . preg_quote($extension) . '$/', $filePath)
+            ) {
+                continue;
+            }
+
+            $result[] = $this->pluginDir . '/' . $filePath;
+        }
+        return $result;
     }
 }
