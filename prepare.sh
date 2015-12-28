@@ -17,13 +17,9 @@ then
     ls $HOME/.fonts
 fi
 
-# quick fix for https://github.com/piwik/travis-scripts/issues/15
-# can't use git checkout since travis uses shallow clones. which are non-trivial to unshallow
-curl 'https://raw.githubusercontent.com/piwik/piwik/master/tests/PHPUnit/config.ini.travis.php' > ./tests/PHPUnit/config.ini.travis.php
-
 # Copy Piwik configuration
 echo "Install config.ini.php"
-sed "s/PDO\\\MYSQL/${MYSQL_ADAPTER}/g" ./tests/PHPUnit/config.ini.travis.php > ./config/config.ini.php
+sed "s/PDO\\\MYSQL/${MYSQL_ADAPTER}/g" ./tests/travis/config.ini.travis.php > ./config/config.ini.php
 
 # Prepare phpunit.xml
 echo "Adjusting phpunit.xml"
