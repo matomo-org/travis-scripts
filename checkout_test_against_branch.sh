@@ -20,7 +20,15 @@ if [ "$TEST_AGAINST_PIWIK_BRANCH" == "" ]; then
 
             export TEST_AGAINST_PIWIK_BRANCH=master
         fi
-    else
+        export TEST_AGAINST_PIWIK_BRANCH=master
+    fi
+elif [[ "$TEST_AGAINST_PIWIK_BRANCH" == "maximum_supported_piwik" && "$PLUGIN_NAME" != "" ]]; then # test against the maximum supported Piwik in the plugin.json file
+    export TEST_AGAINST_PIWIK_BRANCH=$(php "$SCRIPT_DIR/get_required_piwik_version.php" $PLUGIN_NAME "max")
+
+    if ! git rev-parse "$TEST_AGAINST_PIWIK_BRANCH" >/dev/null 2>&1
+    then
+        echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against master."
+
         export TEST_AGAINST_PIWIK_BRANCH=master
     fi
 fi
