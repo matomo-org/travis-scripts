@@ -26,7 +26,7 @@ if ($returnMaxVersion) {
     $versionToReturn = getMaxVersion($requiredVersions);
 
     if (empty($versionToReturn)) {
-        $versionToReturn = trim(file_get_contents('http://builds.piwik.org/LATEST_BETA'));
+        $versionToReturn = trim(file_get_contents('http://api.piwik.org/LATEST_BETA'));
     }
 } else {
     $versionToReturn = getMinVersion($requiredVersions);
