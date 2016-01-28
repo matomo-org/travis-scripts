@@ -1,0 +1,39 @@
+******************************************************************************
+
+What is this build?
+-------------------
+This build is running against the latest Piwik beta version as no maximum
+supported version in plugin.json is specified.
+
+If you want to run this build against a fixed Piwik version, specifiy either a
+maximum supported Piwik version in plugin.json like this:
+
+'require": { "piwik": ">=2.15.0-rc1,<=2.15.0-rc1" },'
+
+or specify a specifc "PIWIK_TEST_TARGET" Piwik version in your ".travis.yml".
+
+
+Why is this important?
+----------------------
+Studies show that it is more efficient and best to find problems as early as
+possible. In general we want to find possible problems as early as possible
+and while you are working on the plugin anyway. This way you can make the
+plugin compatible immediately instead of having to look into it in a few weeks
+again. Also if you identify a bug in Piwik we can provide fixes much faster
+and the build will automatically become green once we release a new beta.
+
+
+What to do when this build fails?
+---------------------------------
+* Identify the cause of failure
+* Report a bug in Piwik core https://github.com/piwik/piwik/issues in case
+  it is a bug in Piwik
+* Make your plugin compatible with the latest Piwik version
+* If you cannot make your plugin compatible with the latest Piwik version,
+  specify a maximum supported Piwik version in your plugin.json file like this:
+  '"require": { "piwik": ">=2.15.0-rc1,<=2.15.0-rc1" },'
+* If you need any help with this contact the Piwik core team
+
+******************************************************************************
+
+
