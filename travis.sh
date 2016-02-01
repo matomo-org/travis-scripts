@@ -53,7 +53,7 @@ then
         echo "./console tests:sync-ui-screenshots $TRAVIS_BUILD_NUMBER"
         if [ -n "$PLUGIN_NAME" ]
         then
-            echo "  --plugin=$PLUGIN_NAME"
+            echo "  --repository=piwik/plugin-$PLUGIN_NAME"
 
             if [ "$UNPROTECTED_ARTIFACTS" = "" ];
             then
