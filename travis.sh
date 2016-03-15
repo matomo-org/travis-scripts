@@ -50,14 +50,14 @@ then
         echo "If the new screenshots are valid, then you can copy them over to the right directory with the command:"
 
         echo ""
-        echo "./console tests:sync-ui-screenshots $TRAVIS_BUILD_NUMBER"
+        echo -n "./console tests:sync-ui-screenshots $TRAVIS_BUILD_NUMBER"
         if [ -n "$PLUGIN_NAME" ]
         then
-            echo "  --repository=piwik/plugin-$PLUGIN_NAME"
+            echo -n " --repository=piwik/plugin-$PLUGIN_NAME"
 
             if [ "$UNPROTECTED_ARTIFACTS" = "" ];
             then
-                echo " --http-user=... --http-password=..."
+                echo -n " --http-user=... --http-password=..."
             fi
         fi
         
