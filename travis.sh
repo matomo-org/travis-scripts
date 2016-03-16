@@ -30,18 +30,6 @@ then
         fi
     elif [ "$TEST_SUITE" = "UITests" ]
     then
-        if [ -n "$PLUGIN_NAME" ]
-        then
-            artifacts_folder="ui-tests.$TRAVIS_BRANCH.$PLUGIN_NAME"
-
-            if [ "$UNPROTECTED_ARTIFACTS" = "" ];
-            then
-                artifacts_folder="protected/$artifacts_folder"
-            fi
-        else
-            artifacts_folder="ui-tests.$TRAVIS_BRANCH"
-        fi
-
         echo ""
         echo "View UI failures (if any) here:"
         echo ""

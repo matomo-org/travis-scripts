@@ -20,8 +20,8 @@ else
         then
             if [ "$UNPROTECTED_ARTIFACTS" = "" ];
             then
+                echo "Artifacts will be protected (premium plugin)..."
                 url_base="$url_base&protected=1"
-                using_protected=1
             fi
         fi
 
