@@ -50,6 +50,7 @@ then
         fi
         
         echo ""
+        echo ""
 
         if [ -n "$PLUGIN_NAME" ]
         then
