@@ -15,10 +15,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class Generator
 {
-    const DEFAULT_MINIMUM_PHP_VERSION_TO_TEST = '5.3.3';
+    const DEFAULT_MINIMUM_PHP_VERSION_TO_TEST = '5.3';
     const DEFAULT_MAXIMUM_PHP_VERSION_TO_TEST = '5.6';
 
-    private static $knownMinorPhpVersionsOnTravis = array('5.3.3');
+    private static $knownMinorPhpVersionsOnTravis = array(
+        // for example '5.3.3'
+    );
 
     /**
      * @var string[]
