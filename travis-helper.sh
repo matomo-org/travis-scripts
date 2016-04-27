@@ -3,7 +3,7 @@
 # Sourced from https://github.com/travis-ci/travis-build/blob/master/lib/travis/build/script/templates/header.sh
 # + Tweaked to display output and not show the status line
 travis_wait() {
-  local timeout=40
+  local timeout=55
   local cmd="$@"
   local log_file=travis_wait_$$.log
 
