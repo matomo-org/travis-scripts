@@ -1,0 +1,490 @@
+<?php
+/**
+ * Piwik - free/libre analytics platform
+ *
+ * @link http://piwik.org
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
+ */
+
+/**
+ * Tests for plugin quality. All plugins maintained by Piwik or Piwik PRO must
+ * pass this test.
+ */
+class PluginQualityTest extends PHPUnit_Framework_TestCase
+{
+    const PRO_HEADER_COMMENT = '/**
+ * Copyright (C) Piwik PRO - All rights reserved.
+ *
+ * Using this code requires that you first get a license from Piwik PRO.
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ *
+ * @link http://piwik.pro
+ */';
+
+    const OPEN_SOURCE_HEADER_COMMENT = '/**
+ * Piwik - free/libre analytics platform
+ *
+ * @link http://piwik.org
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
+ */';
+
+    private static $knownUIPhpFiles = array(
+        "/Controller.php",
+        "/Menu.php",
+    );
+
+    private $pluginName;
+    private $pluginDir;
+    private $pluginFiles;
+    private $pluginHasUIFiles;
+    private $pluginHasNonUIFiles;
+    private $pluginSlug;
+    private $githubToken;
+    private $pluginJsonContents;
+    private $pluginUsesGitFlow;
+
+    public function setUp()
+    {
+        $this->pluginName = getenv('PLUGIN_NAME');
+        if (empty($this->pluginName)) {
+            throw new Exception("PLUGIN_NAME environment variable is not set, do not know which plugin to run tests against.");
+        }
+
+        $this->githubToken = getenv('GITHUB_USER_TOKEN');
+
+        $this->pluginSlug = getenv('TRAVIS_REPO_SLUG');
+        if (empty($this->pluginSlug)) {
+            throw new Exception("TRAVIS_REPO_SLUG environment variable is not set. Needed for github tests.");
+        }
+
+        $this->pluginDir = realpath(__DIR__ . '/../../../plugins/' . $this->pluginName);
+        if (!is_dir($this->pluginDir)) {
+            throw new Exception("Cannot find plugin directory at '{$this->pluginDir}'.");
+        }
+
+        $this->pluginFiles = $this->getPluginCodeFiles();
+        $this->pluginHasUIFiles = $this->hasUIFiles();
+        $this->pluginHasNonUIFiles = $this->hasNonUIFiles();
+
+        $pluginJsonPath = $this->pluginDir . '/plugin.json';
+        if (!file_exists($pluginJsonPath)) {
+            throw new Exception("plugin.json does not exist");
+        }
+
+        $pluginJsonContents = file_get_contents($pluginJsonPath);
+        $pluginJsonContents = json_decode($pluginJsonContents, $assoc = true);
+        if (empty($pluginJsonContents)) {
+            throw new Exception("plugin.json is either empty or invalid JSON");
+        }
+        $this->pluginJsonContents = $pluginJsonContents;
+
+        $this->pluginUsesGitFlow = $this->checkIfPluginUsesGitFlow();
+    }
+
+    public function test_Plugin_HasIntegrationAndSystemTests_IfNonUIFilesExist()
+    {
+        if (!$this->pluginHasNonUIFiles) {
+            return;
+        }
+
+        // TODO: check for unit tests?
+        $testsDir = $this->getPluginTestsDirectory();
+        if (empty($testsDir)) {
+            $this->fail("Plugin has no tests.");
+        }
+
+        $phpTestTypes = array('Integration', 'System');
+        foreach ($phpTestTypes as $type) {
+            $numberOfTests = $this->getDirectoryFileCount($testsDir . '/' . $type, '/Test\.php$/');
+            $this->assertGreaterThan(0, $numberOfTests, "Plugin has 0 $type tests.");
+        }
+    }
+
+    public function test_Plugin_HasUITests_IfUIFilesExist()
+    {
+        if (!$this->pluginHasUIFiles) {
+            return;
+        }
+
+        $testsDir = $this->getPluginTestsDirectory();
+        if (empty($testsDir)) {
+            $this->fail("Plugin has no tests.");
+        }
+
+        $numberOfUITests = $this->getDirectoryFileCount($testsDir . '/UI', '/_spec\.js$/');
+        $this->assertGreaterThan(0, $numberOfUITests, "Plugin has 0 UI tests.");
+    }
+
+    public function test_Plugin_HasAtLeastOneScreenshot_IfUIFilesExist()
+    {
+        if (!$this->pluginHasUIFiles) {
+            return;
+        }
+
+        $screenshotFileCount = 0;
+        foreach ($this->pluginFiles as $file) {
+            if (preg_match('/screenshots\/.*\.(png|jpeg)$/', $file)) {
+                ++$screenshotFileCount;
+            }
+        }
+
+        $this->assertGreaterThan(0, $screenshotFileCount, "Plugin has UI files but no screenshots.");
+    }
+
+    public function test_PluginDotJsonFile_HasDescriptionMatchingGithubDesc()
+    {
+        $pluginJsonContents = $this->pluginJsonContents;
+
+        $this->assertArrayHasKey("description", $pluginJsonContents);
+
+        $pluginJsonDescription = $pluginJsonContents["description"];
+        $this->assertNotContains("TODO", $pluginJsonDescription);
+
+        $repoDescription = $this->getPluginRepoDescription();
+        $this->assertNotEmpty($repoDescription);
+
+        $this->assertEquals($repoDescription, $pluginJsonDescription,
+            "Plugin description in plugin.json does not match github repo description.");
+    }
+
+    public function test_PluginDotJsonFile_HasPluginName_ThatMatchesPluginNamespace()
+    {
+        $this->assertArrayHasKey("name", $this->pluginJsonContents);
+
+        $pluginName = $this->pluginJsonContents["name"];
+        $this->assertEquals($this->pluginName, $pluginName,
+            "Plugin name in plugin.json does not match PLUGIN_NAME env var in travis.");
+
+        foreach ($this->pluginFiles as $file) {
+            if (!preg_match('/\.php$/', $file)) {
+                continue;
+            }
+
+            $fileContents = file_get_contents($this->pluginDir . '/' . $file);
+            if (!preg_match('/^namespace\s*Piwik\\\\Plugins\\\\([^\\\\;\s]+)/', $fileContents, $matches)) {
+                continue;
+            }
+
+            $namespacePluginName = $matches[1];
+            $this->assertEquals($pluginName, $namespacePluginName,
+                "Plugin name in namespace in file '$file' does not match plugin name in plugin.json.");
+        }
+    }
+
+    public function test_PluginDotJsonFile_HasPluginVersion_ThatMatchesComposerDotJsonVersion()
+    {
+        $this->assertArrayHasKey("version", $this->pluginJsonContents);
+
+        $composerJsonPath = $this->pluginDir . '/composer.json';
+        if (!file_exists($composerJsonPath)) {
+            return;
+        }
+
+        $composerJsonContents = file_get_contents($composerJsonPath);
+        $composerJsonContents = json_decode($composerJsonContents, $assoc = true);
+        if (empty($composerJsonContents)) {
+            throw new Exception("composer.json file is either empty or invalid JSON");
+        }
+
+        $this->assertArrayHasKey("version", $composerJsonContents);
+        $this->assertEquals($this->pluginJsonContents["version"], $composerJsonContents["version"],
+            "Version in plugin.json does not match version in composer.json.");
+    }
+
+    public function test_PluginDotJsonFile_HasCorrectFields_IfPluginIsOpenSource()
+    {
+        if ($this->getRepoOwner() != "piwik") {
+            return;
+        }
+
+        $this->assertArrayHasKey("homepage", $this->pluginJsonContents);
+        $this->assertEquals("http://plugins.piwik.org/" . $this->pluginName, $this->pluginJsonContents["homepage"]);
+
+        $this->assertArrayHasKey("authors", $this->pluginJsonContents);
+        $this->assertEquals(array("name" => "Piwik", "email" => "hello@piwik.org", "homepage" => "http://piwik.org"),
+            $this->pluginJsonContents["authors"]);
+
+        $this->assertArrayHasKey("license", $this->pluginJsonContents);
+        $this->assertEquals("GPL v3+", $this->pluginJsonContents["license"]);
+    }
+
+    public function test_PluginDotJsonFile_HasCorrectFields_IfPluginIsClosedSource()
+    {
+        if ($this->getRepoOwner() != "piwikpro") {
+            return;
+        }
+
+        $this->assertArrayHasKey("homepage", $this->pluginJsonContents);
+        $this->assertEquals("https://piwik.pro/plugins", $this->pluginJsonContents["homepage"]);
+
+        $this->assertArrayHasKey("authors", $this->pluginJsonContents);
+        $this->assertEquals(array("name" => "Piwik PRO", "email" => "contact@piwik.pro", "homepage" => "https://piwik.pro"),
+            $this->pluginJsonContents["authors"]);
+
+        $this->assertArrayHasKey("license", $this->pluginJsonContents);
+        $this->assertEquals("Paid plugin", $this->pluginJsonContents["license"]);
+    }
+
+    public function test_PluginPhpFiles_HaveProperCommentHeader()
+    {
+        $expectedHeader = $this->getExpectedPluginHeader();
+        $this->assertPhpFilesHaveHeader($expectedHeader, $this->getPluginCodeFilesOfType('.php'));
+    }
+
+    public function test_PluginJsFiles_HaveProperCommentHeader()
+    {
+        $expectedHeader = $this->getExpectedPluginHeader();
+        $this->assertFilesHaveHeader($expectedHeader, $this->getPluginCodeFilesOfType('.js'));
+    }
+
+    public function test_PluginReadme_Exists()
+    {
+        $pluginReadmePath = $this->getPluginReadmePath();
+        $this->assertFileExists($pluginReadmePath);
+    }
+
+    /**
+     * @depends test_PluginReadme_Exists
+     * @dataProvider getPluginReadmeRequiredSections
+     */
+    public function test_PluginReadme_HasRequiredSection($sectionName)
+    {
+        $pluginReadme = $this->getPluginReadme();
+
+        $regex = '/^#+\s*' . preg_quote($sectionName) . '/im';
+        if (!preg_match($regex, $pluginReadme)) {
+            $this->fail("Plugin README.md is missing required section '$sectionName'.");
+        }
+    }
+
+    public function getPluginReadmeRequiredSections()
+    {
+        return array(
+            array('description'),
+            array('changelog'),
+            array('support'),
+        );
+    }
+
+    public function test_PluginReadme_HasCorrectTravisBuildBadges()
+    {
+        $pluginReadme = $this->getPluginReadme();
+        $this->assertHasBuildBadge('master', $pluginReadme);
+
+        if ($this->pluginUsesGitFlow) {
+            $this->assertHasBuildBadge('develop', $pluginReadme);
+        }
+    }
+
+    public function test_PluginReadme_HasCorrectSupportSection()
+    {
+        $pluginReadme = $this->getPluginReadme();
+
+        // get support section
+        if (!preg_match('/#+\s*Support(.*)(?=(?:\n#)|$)/is', $pluginReadme, $matches)) {
+            throw new \Exception("Cannot find Support section in plugin README.md.");
+        }
+
+        $supportSection = $matches[1];
+
+        if ($this->getRepoOwner() == 'piwikpro') {
+            $this->assertSupportSectionContainsPiwikProEmail($supportSection);
+        } else {
+            $this->assertSupportSectionLinksToIssueTracker($supportSection);
+        }
+
+        $requiredSupportSectionStatement = 'We welcome your feedback about this plugin. Please report bugs or suggest enhancements at';
+        $this->assertContains($requiredSupportSectionStatement, $supportSection);
+    }
+
+    private function getPluginTestsDirectory()
+    {
+        $possibleDirs = array(
+            $this->pluginDir . '/tests',
+            $this->pluginDir . '/Test',
+        );
+
+        foreach ($possibleDirs as $dir) {
+            if (is_dir($dir)) {
+                return $dir;
+            }
+        }
+
+        return null;
+    }
+
+    private function getDirectoryFileCount($directory, $regex)
+    {
+        if (!is_dir($directory)) {
+            return 0;
+        }
+
+        $count = 0;
+        foreach (scandir($directory) as $file) {
+            if (preg_match($regex, $file)) {
+                ++$count;
+            }
+        }
+        return $count;
+    }
+
+    private function getPluginCodeFiles()
+    {
+        $result = array();
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($this->pluginDir), RecursiveIteratorIterator::LEAVES_ONLY);
+
+        /** @var SplFileInfo $file */
+        foreach ($iterator as $file) {
+            $filePath = $file->getPath() . '/' . $file->getBasename();
+
+            if (!preg_match('/\.(php|js|twig|less|png|jpeg)$/', $filePath)
+                || preg_match('/\/tests|Test|vendor\//', $filePath)
+            ) {
+                continue;
+            }
+
+            $result[] = str_replace($this->pluginDir . "/", "", $filePath);
+        }
+
+        return $result;
+    }
+
+    private function hasNonUIFiles()
+    {
+        foreach ($this->pluginFiles as $file) {
+            if (!$this->isUIFile($file)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function hasUIFiles()
+    {
+        foreach ($this->pluginFiles as $file) {
+            if ($this->isUIFile($file)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function isUIFile($file)
+    {
+        return preg_match('/\.(js|twig|less)$/', $file)
+            || in_array($file, self::$knownUIPhpFiles);
+    }
+
+    private function getPluginRepoDescription()
+    {
+        $repoUrl = "https://api.github.com/repos/{$this->pluginSlug}";
+        $authHeader = "Authorization: Basic " . base64_encode(":" . $this->getGithubToken()) . "\r\n";
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => $authHeader
+            ),
+        ));
+        $repoInfo = file_get_contents($repoUrl, null, $context);
+
+        return $repoInfo["description"];
+    }
+
+    private function getRepoOwner()
+    {
+        $parts = explode("/", $this->pluginSlug);
+        return strtolower($parts[0]);
+    }
+
+    private function getExpectedPluginHeader()
+    {
+        if ($this->getRepoOwner() == 'piwikpro') {
+            return self::PRO_HEADER_COMMENT;
+        } else {
+            return self::OPEN_SOURCE_HEADER_COMMENT;
+        }
+    }
+
+    private function assertPhpFilesHaveHeader($expectedHeader, $files)
+    {
+        $expectedHeader = "<?php\n" . $expectedHeader;
+        $this->assertFilesHaveHeader($expectedHeader, $files);
+    }
+
+    private function assertFilesHaveHeader($expectedHeader, $files)
+    {
+        $filesWithoutHeader = array();
+
+        foreach ($files as $file) {
+            $fileContents = file_get_contents($file);
+            if (substr($fileContents, 0, strlen($expectedHeader)) != $expectedHeader) {
+                $filesWithoutHeader[] = $file;
+            }
+        }
+
+        if (!empty($filesWithoutHeader)) {
+            $failMessage = "The following files are missing the correct copyright header:\n";
+            $failMessage .= "- " . implode("\n- ", $filesWithoutHeader);
+            $this->fail($failMessage);
+        }
+    }
+
+    private function getGithubToken()
+    {
+        if (empty($this->githubToken)) {
+            throw new Exception("GITHUB_USER_TOKEN environment variable is not set, cannot run some tests.");
+        }
+    }
+
+    private function getPluginReadmePath()
+    {
+        return $this->pluginDir . '/README.md';
+    }
+
+    private function getPluginReadme()
+    {
+        return file_get_contents($this->getPluginReadmePath());
+    }
+
+    private function assertHasBuildBadge($branch, $pluginReadme)
+    {
+        $regex = '%!\[[^]]+\]\(https:\/\/.*?' . preg_quote($this->pluginSlug) . '\.png?.*?branch=' . preg_quote($branch) . '\)%';
+        $this->assertRegExp($regex, $pluginReadme, "Plugin README is missing travis build badge for branch '$branch'.");
+    }
+
+    private function checkIfPluginUsesGitFlow()
+    {
+        $command = "cd \"{$this->pluginDir}\" git rev-parse --verify develop > /dev/null 2> /dev/null";
+        system($command, $returnCode);
+        return $returnCode;
+    }
+
+    private function assertSupportSectionContainsPiwikProEmail($supportSection)
+    {
+        $this->assertContains('support@piwik.pro', $supportSection);
+    }
+
+    private function assertSupportSectionLinksToIssueTracker($supportSection)
+    {
+        $issueTracker = 'https://github.com/' . $this->pluginSlug . '/issues';
+        $this->assertContains($issueTracker, $supportSection);
+    }
+
+    private function getPluginCodeFilesOfType($extension = null)
+    {
+        $result = array();
+        foreach ($this->pluginFiles as $filePath) {
+            if ($extension !== null
+                && !preg_match('/' . preg_quote($extension) . '$/', $filePath)
+            ) {
+                continue;
+            }
+
+            $result[] = $this->pluginDir . '/' . $filePath;
+        }
+        return $result;
+    }
+}
