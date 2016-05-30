@@ -66,7 +66,21 @@ then
         fi
     elif [ "$TEST_SUITE" = "AllTests" ]
     then
-        travis_wait ./../../console tests:run --options="--colors"
+        if [ "$ALLTEST_EXTRA_OPTIONS" = "--run-first-half-only" ]
+        then
+            echo "Executing tests in test suite SystemTests"
+            travis_wait phpunit --configuration phpunit.xml --testsuite SystemTests --colors $PHPUNIT_EXTRA_OPTIONS
+            echo "Executing tests in test suite UnitTests"
+            travis_wait phpunit --configuration phpunit.xml --testsuite UnitTests --colors $PHPUNIT_EXTRA_OPTIONS
+        elif [ "$ALLTEST_EXTRA_OPTIONS" = "--run-second-half-only" ]
+        then
+            echo "Executing tests in test suite IntegrationTests"
+            travis_wait phpunit --configuration phpunit.xml --testsuite IntegrationTests --colors $PHPUNIT_EXTRA_OPTIONS
+            echo "Executing tests in test suite PluginTests"
+            travis_wait phpunit --configuration phpunit.xml --testsuite PluginTests --colors $PHPUNIT_EXTRA_OPTIONS
+        else
+            travis_wait ./../../console tests:run --options="--colors"
+        fi
     else
         if [ -n "$PLUGIN_NAME" ]
         then
