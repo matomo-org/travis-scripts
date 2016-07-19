@@ -43,7 +43,7 @@ then
         then
             echo -n " --repository=piwik/plugin-$PLUGIN_NAME"
 
-            if [ "$UNPROTECTED_ARTIFACTS" = "" ];
+            if [ "$PROTECTED_ARTIFACTS" = "1" ];
             then
                 echo -n " --http-user=... --http-password=..."
             fi

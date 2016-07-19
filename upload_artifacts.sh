@@ -18,7 +18,7 @@ else
 
         if [ -n "$PLUGIN_NAME" ];
         then
-            if [ "$UNPROTECTED_ARTIFACTS" = "" ];
+            if [ "$PROTECTED_ARTIFACTS" = "1" ];
             then
                 echo "Artifacts will be protected (premium plugin)..."
                 url_base="$url_base&protected=1"
