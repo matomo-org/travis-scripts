@@ -69,24 +69,24 @@ then
         if [ "$ALLTEST_EXTRA_OPTIONS" = "--run-first-half-only" ]
         then
             echo "Executing tests in test suite SystemTests"
-            travis_wait phpunit --configuration phpunit.xml --testsuite SystemTests --colors $PHPUNIT_EXTRA_OPTIONS
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite SystemTests --colors $PHPUNIT_EXTRA_OPTIONS
             echo "Executing tests in test suite UnitTests"
-            travis_wait phpunit --configuration phpunit.xml --testsuite UnitTests --colors $PHPUNIT_EXTRA_OPTIONS
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite UnitTests --colors $PHPUNIT_EXTRA_OPTIONS
         elif [ "$ALLTEST_EXTRA_OPTIONS" = "--run-second-half-only" ]
         then
             echo "Executing tests in test suite IntegrationTests"
-            travis_wait phpunit --configuration phpunit.xml --testsuite IntegrationTests --colors $PHPUNIT_EXTRA_OPTIONS
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite IntegrationTests --colors $PHPUNIT_EXTRA_OPTIONS
             echo "Executing tests in test suite PluginTests"
-            travis_wait phpunit --configuration phpunit.xml --testsuite PluginTests --colors $PHPUNIT_EXTRA_OPTIONS
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite PluginTests --colors $PHPUNIT_EXTRA_OPTIONS
         else
             travis_wait ./../../console tests:run --options="--colors"
         fi
     else
         if [ -n "$PLUGIN_NAME" ]
         then
-            travis_wait phpunit --configuration phpunit.xml --colors --testsuite $TEST_SUITE --group $PLUGIN_NAME --coverage-clover $PIWIK_ROOT_DIR/build/logs/clover-$PLUGIN_NAME.xml $PHPUNIT_EXTRA_OPTIONS | tee phpunit.out
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --colors --testsuite $TEST_SUITE --group $PLUGIN_NAME --coverage-clover $PIWIK_ROOT_DIR/build/logs/clover-$PLUGIN_NAME.xml $PHPUNIT_EXTRA_OPTIONS | tee phpunit.out
         else
-            travis_wait phpunit --configuration phpunit.xml --testsuite $TEST_SUITE --colors $PHPUNIT_EXTRA_OPTIONS | tee phpunit.out
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite $TEST_SUITE --colors $PHPUNIT_EXTRA_OPTIONS | tee phpunit.out
         fi
 
         exit_code="${PIPESTATUS[0]}"
@@ -102,10 +102,10 @@ else
     if [ "$COVERAGE" = "Unit" ]
     then
         echo "Executing tests in test suite UnitTests..."
-        phpunit --configuration phpunit.xml --testsuite UnitTests --colors --coverage-clover $TRAVIS_BUILD_DIR/build/logs/clover-unit.xml $PHPUNIT_EXTRA_OPTIONS || true
+        ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite UnitTests --colors --coverage-clover $TRAVIS_BUILD_DIR/build/logs/clover-unit.xml $PHPUNIT_EXTRA_OPTIONS || true
     elif [ "$COVERAGE" = "Integration" ]
     then
         echo "Executing tests in test suite IntegrationTests..."
-        phpunit --configuration phpunit.xml --testsuite IntegrationTests --colors --coverage-clover $TRAVIS_BUILD_DIR/build/logs/clover-integration.xml $PHPUNIT_EXTRA_OPTIONS || true
+        ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite IntegrationTests --colors --coverage-clover $TRAVIS_BUILD_DIR/build/logs/clover-integration.xml $PHPUNIT_EXTRA_OPTIONS || true
     fi;
 fi
