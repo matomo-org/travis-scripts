@@ -99,7 +99,6 @@ before_install:
 
     {{ customTravisBuildSteps.before_install.after|indent(2)|raw }}
 {% endif %}
-  - ./tests/travis/install_git_lfs.sh
 
 install:
 {% if customTravisBuildSteps.install.before|default is not empty %}  {{ customTravisBuildSteps.install.before|indent(2)|raw }}
@@ -126,6 +125,7 @@ install:
   - git fetch -q
 {% endif %}
 
+  - ./tests/travis/install_git_lfs.sh
   - export GENERATE_TRAVIS_YML_COMMAND="{{ consoleCommand|raw }}"
   - '[[ "$TRAVIS_JOB_NUMBER" != *.1 || "$TRAVIS_PULL_REQUEST" != "false" ]] || ./tests/travis/autoupdate_travis_yml.sh'
 {% if generationMode == 'plugin' or generationMode == 'piwik-tests-plugins' %}
