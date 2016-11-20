@@ -5,6 +5,8 @@ SCRIPT_DIR=$( dirname "$0" )
 # for travis_wait function
 source $SCRIPT_DIR/travis-helper.sh
 
+if [[ "$PIWIK_TEST_TARGET" == "maximum_supported_piwik" && -n "$PLUGIN_NAME" ]]; then cat "$SCRIPT_DIR/latest_beta_build_explain.txt"; fi
+
 # go to tests directory
 cd ../PHPUnit
 
