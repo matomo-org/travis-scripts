@@ -16,7 +16,7 @@ language: php
 {% if phpVersions|default is empty %}
 php:
   - 5.6
-  - 5.3
+  - 5.5
 {% else %}
 php:
 {% for version in phpVersions %}  - {{ version|raw }}
@@ -204,6 +204,7 @@ before_script:
 
   - ./tests/travis/prepare.sh
   - ./tests/travis/setup_webserver.sh
+  - if [[ "$TRAVIS_PHP_VERSION" != 5.3* ]]; then ./tests/travis/install_phantomjs.sh; export PATH=$PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH; fi
 
   - cd {{ travisShCwd }}
 {% if customTravisBuildSteps.before_script.after|default is not empty %}
