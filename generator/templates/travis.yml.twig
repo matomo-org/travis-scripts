@@ -238,9 +238,7 @@ after_success:
   - cd $PIWIK_ROOT_DIR
 {% if generationMode == 'core' %}  - ./tests/travis/generate_docs.sh
 {% endif %}
-{% if customTravisBuildSteps.after_success.after|default is not empty %}
-
-  {{ customTravisBuildSteps.after_success.after|indent(2)|raw }}{% endif %}
+{% if customTravisBuildSteps.after_success.after|default is not empty %}{{ customTravisBuildSteps.after_success.after|indent(2)|raw }}{% endif %}
 {% if extraSections|default is not empty %}
 
 {{ extraSections|trim|raw }}
