@@ -226,15 +226,11 @@ after_script:
 
   # upload test artifacts (for debugging travis failures)
   - ./tests/travis/upload_artifacts.sh
-{% if customTravisBuildSteps.after_script.after|default is not empty %}
-
-  {{ customTravisBuildSteps.after_script.after|indent(2)|raw }}
+{% if customTravisBuildSteps.after_script.after|default is not empty %}{{ customTravisBuildSteps.after_script.after|indent(2)|raw }}
 {% endif %}
 
 after_success:
-{% if customTravisBuildSteps.after_success.before|default is not empty %}  {{ customTravisBuildSteps.after_success.before|indent(2)|raw }}
-
-{% endif %}
+{% if customTravisBuildSteps.after_success.before|default is not empty %}  {{ customTravisBuildSteps.after_success.before|indent(2)|raw }}{% endif %}
   - cd $PIWIK_ROOT_DIR
 {% if generationMode == 'core' %}  - ./tests/travis/generate_docs.sh
 {% endif %}
