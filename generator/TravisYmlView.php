@@ -185,7 +185,7 @@ class TravisYmlView
             } else if ($sectionName == 'matrix') {
                 $this->variables['existingMatrix'] = $section;
             } else if (!in_array($sectionName, self::$travisYmlSectionNames)) {
-                $this->variables['extraSections'] .= "\n\n$sectionName:" . $section;
+                $this->variables['extraSections'] .= "$sectionName:" . $section;
             }
         }
     }
