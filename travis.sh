@@ -68,21 +68,25 @@ then
         fi
     elif [ "$TEST_SUITE" = "AllTests" ]
     then
+        exit_code=0
+
         if [ "$ALLTEST_EXTRA_OPTIONS" = "--run-first-half-only" ]
         then
             echo "Executing tests in test suite SystemTests"
-            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite SystemTests --colors $PHPUNIT_EXTRA_OPTIONS
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite SystemTests --colors $PHPUNIT_EXTRA_OPTIONS || exit_code=$?
             echo "Executing tests in test suite UnitTests"
-            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite UnitTests --colors $PHPUNIT_EXTRA_OPTIONS
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite UnitTests --colors $PHPUNIT_EXTRA_OPTIONS || exit_code=$?
         elif [ "$ALLTEST_EXTRA_OPTIONS" = "--run-second-half-only" ]
         then
             echo "Executing tests in test suite IntegrationTests"
-            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite IntegrationTests --colors $PHPUNIT_EXTRA_OPTIONS
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite IntegrationTests --colors $PHPUNIT_EXTRA_OPTIONS || exit_code=$?
             echo "Executing tests in test suite PluginTests"
-            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite PluginTests --colors $PHPUNIT_EXTRA_OPTIONS
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite PluginTests --colors $PHPUNIT_EXTRA_OPTIONS || exit_code=$?
         else
-            travis_wait ./../../console tests:run --options="--colors"
+            travis_wait ./../../console tests:run --options="--colors" || exit_code=$?
         fi
+
+        exit $exit_code
     else
         if [ -n "$PLUGIN_NAME" ]
         then
