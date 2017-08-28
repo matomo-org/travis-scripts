@@ -34,6 +34,7 @@ class TravisYmlView
         'after_script',
         'after_success',
         'sudo',
+        'dist',
         'addons',
     );
 
