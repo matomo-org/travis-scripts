@@ -263,21 +263,22 @@ abstract class Generator
 
     private function getPhpVersionsKnownToExistOnTravis()
     {
-        $self = $this;
-        return array_map(function ($version) use ($self) {
-            if (in_array($version, Generator::$knownMinorPhpVersionsOnTravis)
-                || substr_count($version, ".") < 2
-            ) {
-                return $version;
-            } else {
-                $parts = explode('.', $version, 3);
-                $parts = array($parts[0], $parts[1]);
-                $versionWithoutPatch =  implode('.', $parts);
+        return array_map(array($this, 'getPhpVersionKnownToExistOnTravis'), $this->phpVersions);
+    }
 
-                $self->log("info", "Version '$version' is not known to be available on travis, using '$versionWithoutPatch'.");
+    protected function getPhpVersionKnownToExistOnTravis($version){
+        if (in_array($version, Generator::$knownMinorPhpVersionsOnTravis)
+            || substr_count($version, ".") < 2
+        ) {
+            return $version;
+        } else {
+            $parts = explode('.', $version, 3);
+            $parts = array($parts[0], $parts[1]);
+            $versionWithoutPatch =  implode('.', $parts);
 
-                return $versionWithoutPatch;
-            }
-        }, $this->phpVersions);
+            $this->log("info", "Version '$version' is not known to be available on travis, using '$versionWithoutPatch'.");
+
+            return $versionWithoutPatch;
+        }
     }
 }

@@ -26,9 +26,10 @@ class PluginTravisYmlGenerator extends Generator
         $this->targetPlugin = $targetPlugin;
 
         if (empty($this->minimumPhpVersion)) {
-            $this->minimumPhpVersion = $this->getPluginMinimumPhpVersion();
+            $minimumPhpVersion = $this->getPluginMinimumPhpVersion();
 
-            if (!empty($this->minimumPhpVersion)) {
+            if (!empty($minimumPhpVersion)) {
+                $this->minimumPhpVersion = $this->getPhpVersionKnownToExistOnTravis($minimumPhpVersion);
                 $this->replaceMinimumPhpVersionInPhpVersions();
             }
         }
