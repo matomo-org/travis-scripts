@@ -24,8 +24,6 @@ php:
 {% endif %}
 #  - hhvm
 
-dist: precise
-
 services:
   - redis-server
 
@@ -85,6 +83,8 @@ matrix:
 matrix:
   {{ existingMatrix|trim|raw }}
 {% endif %}
+
+dist: precise
 
 sudo: {% if useNewTravisInfrastructure|default %}false{% else %}required{% endif %}
 
