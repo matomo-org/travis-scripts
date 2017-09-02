@@ -100,7 +100,7 @@ before_install:
     {{ customTravisBuildSteps.before_install.after|indent(2)|raw }}
 {% endif %}
 {% if generationMode == 'core' %}
-  - ./tests/travis/install_git_lfs.sh
+  - . ./tests/travis/install_git_lfs.sh
 {% endif %}
 
 install:
