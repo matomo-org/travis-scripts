@@ -54,7 +54,7 @@ echo "Starting php-fpm"
 $PHP_FPM_BIN --fpm-config "$DIR/php-fpm.ini"
 
 echo "Starting nginx using config $DIR/piwik_nginx.conf"
-if grep "sudo: false" "$TRAVIS_BUILD_DIR/.travis.yml"; then
+if [ "$TRAVIS_SUDO" == "false" ]; then
     nginx -c "$DIR/piwik_nginx.conf"
 else
     # use port 80 if this build allows using sudo
