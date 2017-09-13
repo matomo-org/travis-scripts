@@ -90,12 +90,15 @@ matrix:
   {{ existingMatrix|trim|raw }}
 {% endif %}
 
+{% if generationMode == 'core' %}
+dist: trusty
+{% else %}
 dist: precise
 
-{% if generationMode == 'plugin' %}sudo: {% if useNewTravisInfrastructure|default %}false{% else %}required{% endif %}
-
+sudo: {% if useNewTravisInfrastructure|default %}false{% else %}required{% endif %}
 
 {% endif %}
+
 script: {{ travisShScriptLocation }}
 
 before_install:
