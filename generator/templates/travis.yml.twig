@@ -43,6 +43,11 @@ addons:
 {% if partials['addons.apt.packages']|default is not empty %}      {{ partials['addons.apt.packages']|indent(6)|raw }}
 {% endif %}
 
+{% if generationMode == 'core' %}
+git:
+  lfs_skip_smudge: true
+
+{% endif %}
 # Separate different test suites
 {% if existingEnv|default is empty -%}
 env:

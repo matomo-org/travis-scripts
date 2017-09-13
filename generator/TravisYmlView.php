@@ -36,6 +36,7 @@ class TravisYmlView
         'sudo',
         'dist',
         'addons',
+        'git',
     );
 
     /**
