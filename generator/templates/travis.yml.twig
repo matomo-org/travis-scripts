@@ -13,7 +13,7 @@
 
 language: php
 
-{% if phpVersions|default is empty %}
+{% if generationMode == 'plugin' %}{% if phpVersions|default is empty %}
 php:
   - 5.6
   - 5.5
@@ -24,6 +24,7 @@ php:
 {% endif %}
 #  - hhvm
 
+{% endif %}
 services:
   - redis-server
 
@@ -86,9 +87,10 @@ matrix:
 
 dist: precise
 
-sudo: {% if useNewTravisInfrastructure|default %}false{% else %}required{% endif %}
+{% if generationMode == 'plugin' %}sudo: {% if useNewTravisInfrastructure|default %}false{% else %}required{% endif %}
 
 
+{% endif %}
 script: {{ travisShScriptLocation }}
 
 before_install:
