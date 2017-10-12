@@ -9,7 +9,9 @@ set -e
 DIR=$(dirname "$0")
 DIR=$(realpath "$DIR")
 
-service nginx stop
+if [ "$TRAVIS_SUDO" == "true" ]; then
+  sudo service nginx stop
+fi
 
 # Setup PHP-FPM
 echo "Configuring php-fpm"
@@ -54,14 +56,13 @@ echo "Starting php-fpm"
 $PHP_FPM_BIN --fpm-config "$DIR/php-fpm.ini"
 
 echo "Starting nginx using config $DIR/piwik_nginx.conf"
-if grep "sudo: false" "$TRAVIS_BUILD_DIR/.travis.yml"; then
+if [ "$TRAVIS_SUDO" == "false" ]; then
     nginx -c "$DIR/piwik_nginx.conf"
 else
     # use port 80 if this build allows using sudo
     sed -i "s|listen\s*3000;|listen 80;|g" "$DIR/piwik_nginx.conf"
     sed -i "s|port\s*=\s*3000||g" "$PIWIK_ROOT/config/config.ini.php"
-    echo "user www-data;" | cat - "$DIR/piwik_nginx.conf" > .tmpconf && mv .tmpconf "$DIR/piwik_nginx.conf"
+    echo "user $USER;" | cat - "$DIR/piwik_nginx.conf" > .tmpconf && mv .tmpconf "$DIR/piwik_nginx.conf"
 
-    sudo chown www-data:www-data "$PHP_FPM_SOCK"
     sudo nginx -c "$DIR/piwik_nginx.conf"
 fi

@@ -1,19 +1,18 @@
 #!/bin/bash
 
-# Install git lfs for UI tests screenshots
-# TODO: remove/update when Travis updates the VM (should be installed by default)
-curl -sLo - https://github.com/github/git-lfs/releases/download/v1.2.1/git-lfs-linux-amd64-1.2.1.tar.gz | tar xzvf -
-cd git-lfs-*
+command -v 'git-lfs' >/dev/null || {
+  GIT_LFS_VERSION=2.2.1
 
-sudo ./install.sh
-cd ..
-rm -rf git-lfs-*
+  curl -sLo - https://github.com/github/git-lfs/releases/download/v${GIT_LFS_VERSION}/git-lfs-linux-amd64-${GIT_LFS_VERSION}.tar.gz | tar xzvf -
 
-if [ "$TEST_SUITE" = "UITests" ];
-then
+  mkdir -p "${HOME}/bin"
+  mv git-lfs-*/git-lfs "${HOME}/bin"
+  rm -rf git-lfs-*
 
-    # Now that git-lfs is installed we download the screenshots
-    sudo git lfs fetch
-    sudo git lfs checkout
+  export PATH="${HOME}/bin:$PATH"
+}
 
+if [[ "${TEST_SUITE}" == "UITests" ]]; then
+    git lfs fetch
+    git lfs checkout
 fi

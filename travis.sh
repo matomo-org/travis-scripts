@@ -25,7 +25,8 @@ then
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
     then
 
-        if grep "sudo: false" "$TRAVIS_BUILD_DIR/.travis.yml"; then
+        if [ "$TRAVIS_SUDO" = "false" ]
+        then
             phantomjs ../javascript/testrunner.js "http://localhost:3000/tests/javascript/"
         else
             phantomjs ../javascript/testrunner.js "http://localhost/tests/javascript/"
