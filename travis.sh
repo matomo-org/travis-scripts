@@ -36,7 +36,7 @@ then
         echo ""
         echo "View UI failures (if any) here:"
         echo ""
-        echo "http://builds-artifacts.piwik.org/$TRAVIS_REPO_SLUG/$TRAVIS_BRANCH/$TRAVIS_BUILD_NUMBER/"
+        echo "https://builds-artifacts.piwik.org/$TRAVIS_REPO_SLUG/$TRAVIS_BRANCH/$TRAVIS_BUILD_NUMBER/"
         echo ""
         echo "If the new screenshots are valid, then you can copy them over to the right directory with the command:"
 
