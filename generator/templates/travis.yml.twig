@@ -90,10 +90,9 @@ matrix:
   {{ existingMatrix|trim|raw }}
 {% endif %}
 
-{% if generationMode == 'core' %}
-dist: trusty
-{% else %}
-dist: precise
+dist: {% if generationMode == 'core' or useTravisTrustyDistribution|default %}trusty{% else %}precise{% endif %}
+
+{% if generationMode == 'plugin' %}
 
 sudo: {% if useTravisContainerEnvironment|default %}false{% else %}required{% endif %}
 
