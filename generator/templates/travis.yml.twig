@@ -43,7 +43,7 @@ addons:
 {% if partials['addons.apt.packages']|default is not empty %}      {{ partials['addons.apt.packages']|indent(6)|raw }}
 {% endif %}
 
-{% if generationMode == 'core' %}
+{% if generationMode == 'core' or useTravisTrustyDistribution|default %}
 git:
   lfs_skip_smudge: true
 
