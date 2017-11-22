@@ -83,7 +83,7 @@ class PluginTravisYmlGenerator extends Generator
             $testsToRun[] = array('name' => 'PluginTests',
                 'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=minimum_required_piwik");
 
-            $testsToExclude[] = array('description' => 'execute latest stable tests only w/ PHP 5.5',
+            $testsToExclude[] = array('description' => 'execute latest stable tests only w/ PHP 5.6',
                 'php' => $this->minimumPhpVersion,
                 'env' => 'TEST_SUITE=PluginTests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=minimum_required_piwik');
         }
