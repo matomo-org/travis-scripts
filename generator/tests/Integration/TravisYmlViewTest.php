@@ -32,7 +32,7 @@ class TravisYmlViewTest extends PHPUnit_Framework_TestCase
             array('name' => "PluginTests", 'vars' => "MYSQL_ADAPTER=PDO_MYSQL"),
             array('name' => "PluginTests", 'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=latest_stable")
         ));
-        $view->useNewTravisInfrastructure();
+        $view->useTravisContainerEnvironment();
         $output = $view->render();
 
         $yaml = Spyc::YAMLLoadString($output);

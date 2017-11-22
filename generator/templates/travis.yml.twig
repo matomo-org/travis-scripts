@@ -95,7 +95,7 @@ dist: trusty
 {% else %}
 dist: precise
 
-sudo: {% if useNewTravisInfrastructure|default %}false{% else %}required{% endif %}
+sudo: {% if useTravisContainerEnvironment|default %}false{% else %}required{% endif %}
 
 {% endif %}
 
