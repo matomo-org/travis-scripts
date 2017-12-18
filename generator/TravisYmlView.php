@@ -249,9 +249,14 @@ class TravisYmlView
         $this->variables['latestStableVersion'] = $latestStableVersion;
     }
 
-    public function useNewTravisInfrastructure()
+    public function useTravisContainerEnvironment()
     {
-        $this->variables['useNewTravisInfrastructure'] = true;
+        $this->variables['useTravisContainerEnvironment'] = true;
+    }
+
+    public function useTravisTrustyDistribution()
+    {
+        $this->variables['useTravisTrustyDistribution'] = true;
     }
 
     public function render()

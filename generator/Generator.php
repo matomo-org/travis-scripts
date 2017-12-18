@@ -147,8 +147,12 @@ abstract class Generator
 
         $this->setExtraEnvironmentVariables();
 
+        if (!empty($this->options['dist-trusty'])) {
+            $this->view->useTravisTrustyDistribution();
+        }
+
         if (!empty($this->options['sudo-false'])) {
-            $this->view->useNewTravisInfrastructure();
+            $this->view->useTravisContainerEnvironment();
         }
     }
 

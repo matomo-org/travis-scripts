@@ -43,7 +43,7 @@ addons:
 {% if partials['addons.apt.packages']|default is not empty %}      {{ partials['addons.apt.packages']|indent(6)|raw }}
 {% endif %}
 
-{% if generationMode == 'core' %}
+{% if generationMode == 'core' or useTravisTrustyDistribution|default %}
 git:
   lfs_skip_smudge: true
 
@@ -90,12 +90,11 @@ matrix:
   {{ existingMatrix|trim|raw }}
 {% endif %}
 
-{% if generationMode == 'core' %}
-dist: trusty
-{% else %}
-dist: precise
+dist: {% if generationMode == 'core' or useTravisTrustyDistribution|default %}trusty{% else %}precise{% endif %}
 
-sudo: {% if useNewTravisInfrastructure|default %}false{% else %}required{% endif %}
+{% if generationMode == 'plugin' %}
+
+sudo: {% if useTravisContainerEnvironment|default %}false{% else %}required{% endif %}
 
 {% endif %}
 
