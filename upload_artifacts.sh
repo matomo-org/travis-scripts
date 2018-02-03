@@ -2,7 +2,7 @@
 
 if [ "$TEST_SUITE" = "SystemTests" ];
 then
-    url="http://builds-artifacts.piwik.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
+    url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
 
     echo "Uploading artifacts for $TEST_SUITE..."
 
@@ -14,7 +14,7 @@ then
 else
     if [ "$TEST_SUITE" = "UITests" ];
     then
-        url_base="http://builds-artifacts.piwik.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&build_id=$TRAVIS_BUILD_NUMBER&build_entity_id=$TRAVIS_BUILD_ID&branch=$TRAVIS_BRANCH"
+        url_base="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&build_id=$TRAVIS_BUILD_NUMBER&build_entity_id=$TRAVIS_BUILD_ID&branch=$TRAVIS_BRANCH"
 
         if [ -n "$PLUGIN_NAME" ];
         then
