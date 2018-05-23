@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$TEST_SUITE" = "SystemTests" ] || [ "$TEST_SUITE" = "SystemTestsCore" ] || [ "$TEST_SUITE" = "SystemTestsPlugin" ];
+if [ "$TEST_SUITE" = "SystemTests" ] || [ "$TEST_SUITE" = "SystemTestsCore" ] || [ "$TEST_SUITE" = "SystemTestsPlugins" ];
 then
     url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
 
