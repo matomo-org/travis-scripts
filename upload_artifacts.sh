@@ -2,14 +2,19 @@
 
 if [ "$TEST_SUITE" = "SystemTests" ] || [ "$TEST_SUITE" = "SystemTestsCore" ] || [ "$TEST_SUITE" = "SystemTestsPlugins" ];
 then
-    url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
 
     echo "Uploading artifacts for $TEST_SUITE..."
 
-    cd ./tests/PHPUnit/System
+    if [ "$TEST_SUITE" = "SystemTestsCore" ];
+    then
+        url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
+        tar -cjf processed.tar.bz2 tests/PHPUnit/System/processed/* --exclude='.gitkeep' --transform 's/.*\///'
+    else
+        url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system.plugin&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
+        tar -cjf processed.tar.bz2 plugins/*/tests/System/processed/* --exclude='.gitkeep' --transform 's/plugins\///g' --transform 's/\/tests\/System\/processed\//~~/'
+    fi
 
     # upload processed tarball
-    tar -cjf processed.tar.bz2 processed --exclude='.gitkeep'
     curl -X POST --data-binary @processed.tar.bz2 "$url"
 else
     if [ "$TEST_SUITE" = "UITests" ];
