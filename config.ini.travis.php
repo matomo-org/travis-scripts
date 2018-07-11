@@ -31,3 +31,4 @@ log_level = info
 
 ; leave this empty here
 [General]
+cors_domains[] = *
