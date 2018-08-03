@@ -46,7 +46,7 @@ class GenerateTravisYmlFile extends Command
             ->addOption('repo-root-dir', null, InputOption::VALUE_REQUIRED, "Path to the repo for whom a .travis.yml file will be generated for.")
             ->addOption('force-php-tests', null, InputOption::VALUE_NONE, "Forces the presence of the PHP tests jobs for plugin builds.")
             ->addOption('force-ui-tests', null, InputOption::VALUE_NONE, "Forces the presence of the UI tests jobs for plugin builds.")
-            ->addOption('dist-trusty', null, InputOption::VALUE_NONE, "If supplied, the .travis.yml file will use travis' trusty distribution.")
+            ->addOption('dist-trusty', null, InputOption::VALUE_NONE, "Just for backwards compatibility, using travis' trusty distribution is the default now.")
             ->addOption('sudo-false', null, InputOption::VALUE_NONE, "If supplied, the .travis.yml file will use travis' container environment.");
     }
 

@@ -43,11 +43,9 @@ addons:
 {% if partials['addons.apt.packages']|default is not empty %}      {{ partials['addons.apt.packages']|indent(6)|raw }}
 {% endif %}
 
-{% if generationMode == 'core' or useTravisTrustyDistribution|default %}
 git:
   lfs_skip_smudge: true
 
-{% endif %}
 # Separate different test suites
 {% if existingEnv|default is empty -%}
 env:
@@ -90,8 +88,7 @@ matrix:
   {{ existingMatrix|trim|raw }}
 {% endif %}
 
-dist: {% if generationMode == 'core' or useTravisTrustyDistribution|default %}trusty{% else %}precise{% endif %}
-
+dist: trusty
 {% if generationMode == 'plugin' %}
 
 sudo: {% if useTravisContainerEnvironment|default %}false{% else %}required{% endif %}
