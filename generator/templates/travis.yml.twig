@@ -30,13 +30,10 @@ services:
 
 addons:
   apt:
-    sources:
-      - deadsnakes
-{% if partials['addons.apt.sources']|default is not empty %}      {{ partials['addons.apt.sources']|indent(6)|raw }}{% endif %}
-
+{% if partials['addons.apt.sources']|default is not empty %}    sources:
+      {{ partials['addons.apt.sources']|indent(6)|raw }}
+{% endif %}
     packages:
-      - python2.6
-      - python2.6-dev
       - nginx
       - realpath
       - lftp
