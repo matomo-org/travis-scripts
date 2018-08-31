@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Link python 2.6 to python 2.7 executable
+ln -s /usr/bin/python2.7 /usr/bin/python2.6
+
 if [ "$SKIP_PIWIK_TEST_PREPARE" == "1" ]; then
     echo "Skipping Piwik specific test peparation."
     exit 0;
