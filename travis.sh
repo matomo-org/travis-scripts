@@ -93,7 +93,7 @@ then
         then
             travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --colors --testsuite $TEST_SUITE --group $PLUGIN_NAME --coverage-clover $PIWIK_ROOT_DIR/build/logs/clover-$PLUGIN_NAME.xml $PHPUNIT_EXTRA_OPTIONS | tee phpunit.out
         else
-            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite $TEST_SUITE --colors $PHPUNIT_EXTRA_OPTIONS | tee phpunit.out
+            travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testdox --testsuite $TEST_SUITE --colors $PHPUNIT_EXTRA_OPTIONS | tee phpunit.out
         fi
 
         exit_code="${PIPESTATUS[0]}"
