@@ -49,6 +49,7 @@ class TravisYmlView
     private static $travisYmlPartials = array(
         'addons.apt.sources',
         'addons.apt.packages',
+        'addons',
     );
 
     /**

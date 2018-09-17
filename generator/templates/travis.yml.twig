@@ -39,6 +39,8 @@ addons:
       - lftp
 {% if partials['addons.apt.packages']|default is not empty %}      {{ partials['addons.apt.packages']|indent(6)|raw }}
 {% endif %}
+{% if partials['addons']|default is not empty %}  {{ partials['addons']|indent(4)|raw }}
+{% endif %}
 
 {% if generationMode == 'core' or useTravisTrustyDistribution|default %}
 git:
