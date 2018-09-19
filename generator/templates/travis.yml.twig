@@ -134,6 +134,7 @@ install:
   - cd ./tests/travis ; git checkout master ; cd ../..
 {% else %}
   - git fetch -q
+  - git lfs pull
 {% endif %}
 
   - export GENERATE_TRAVIS_YML_COMMAND="{{ consoleCommand|raw }}"
