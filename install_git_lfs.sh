@@ -13,7 +13,6 @@ command -v 'git-lfs' >/dev/null || {
 }
 
 if [[ "${TEST_SUITE}" == "UITests" ]]; then
-    git lfs fetch
+    git lfs fetch --exclude=
     git lfs checkout
-    git lfs pull
 fi
