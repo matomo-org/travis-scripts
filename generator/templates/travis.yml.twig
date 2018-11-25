@@ -170,7 +170,7 @@ before_script:
 {% if customTravisBuildSteps.before_script.before|default is not empty %}  {{ customTravisBuildSteps.before_script.before|indent(2)|raw }}
 
 {% endif %}
-  - if [[ "$TRAVIS_PHP_VERSION" != 7* ]]; then phpenv config-rm xdebug.ini; fi
+  - phpenv config-rm xdebug.ini
 
   # add always_populate_raw_post_data=-1 to php.ini
   - echo "always_populate_raw_post_data=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
