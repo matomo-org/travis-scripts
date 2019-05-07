@@ -15,6 +15,13 @@ then
 
     echo "fonts:"
     ls $HOME/.fonts
+
+    echo "installing node/puppeteer"
+
+    nvm install 8 && nvm use 8
+    cd ./tests/lib/screenshot-testing
+    npm install
+    cd $PIWIK_ROOT_DIR
 fi
 
 # Copy Piwik configuration
