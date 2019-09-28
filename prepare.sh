@@ -62,3 +62,10 @@ else
     echo 'extension="redis.so"' > ./tmp/redis.ini
     phpenv config-add ./tmp/redis.ini
 fi;
+
+#
+# php.ini config
+#
+
+# increase memory limit
+echo "memory_limit = 1024M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
