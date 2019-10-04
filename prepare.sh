@@ -68,4 +68,4 @@ fi;
 #
 
 # increase memory limit
-echo "memory_limit = 128M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+echo "memory_limit = 2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
