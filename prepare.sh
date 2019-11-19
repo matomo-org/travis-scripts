@@ -6,6 +6,17 @@ fi
 
 set -e
 
+# Install woff2 if not already present
+if [ ! -d "travis_woff2" ];
+then
+    git clone --recursive https://github.com/google/woff2.git travis_woff2
+    cd travis_woff2
+    make clean all
+    cd ..
+fi
+
+export PATH=$PATH:`pwd`/travis_woff2
+
 # Install fonts for UI tests
 if [ "$TEST_SUITE" = "UITests" ];
 then
