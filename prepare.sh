@@ -15,6 +15,8 @@ then
     cd travis_woff2
     make clean all
     cd ..
+
+    ls travis_woff2/*
 fi
 
 export PATH=$PATH:`pwd`/travis_woff2
