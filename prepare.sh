@@ -11,6 +11,7 @@ if [ ! -d "travis_woff2/src" ];
 then
     echo "installing woff2..."
 
+    rm -r ../travis_woff2
     git clone --recursive https://github.com/google/woff2.git ../travis_woff2
     cd ../travis_woff2
     make clean all
