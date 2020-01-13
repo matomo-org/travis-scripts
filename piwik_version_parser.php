@@ -72,6 +72,12 @@ function getMaxVersion(array $requiredVersions)
         if ($comparison == '<' && $version == '3.0.0-b1') {
             $maxVersion = trim(file_get_contents('http://api.piwik.org/1.0/getLatestVersion/?release_channel=latest_2x_beta'));
             continue;
+        } elseif ($comparison == '<' && $version == '4.0.0-b1') {
+            $maxVersion = trim(file_get_contents('http://api.piwik.org/1.0/getLatestVersion/?release_channel=latest_3x_beta'));
+            continue;
+        } elseif ($comparison == '<' && $version == '5.0.0-b1') {
+            $maxVersion = trim(file_get_contents('http://api.piwik.org/1.0/getLatestVersion/?release_channel=latest_4x_beta'));
+            continue;
         }
 
         if (in_array($comparison, array('<', '<=', '=='))) {
