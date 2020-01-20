@@ -14,13 +14,13 @@ env:
 script: ./travis.sh
 
 install:
-  - TEST_PIWIK_VERSION=$(wget builds.piwik.org/LATEST -q -O -)
+  - TEST_PIWIK_VERSION=$(wget builds.matomo.org/LATEST -q -O -)
   - TEST_PIWIK_VERSION=`echo $TEST_PIWIK_VERSION | tr -d ' ' | tr -d '\n'`
   - mkdir ExamplePlugin
   - cp -R !(ExamplePlugin) ExamplePlugin
   - cp -R .git/ ExamplePlugin/
-  - git clone https://github.com/piwik/piwik.git piwik
-  - cd piwik
+  - git clone https://github.com/matomo-org/matomo.git matomo
+  - cd matomo
   - git checkout "$TEST_PIWIK_VERSION"
   - git submodule init
   - git submodule update || true
@@ -28,16 +28,16 @@ install:
   - composer install
   - rm -rf plugins/ExamplePlugin
   - cd ../
-  - mv ExamplePlugin piwik/plugins
+  - mv ExamplePlugin matomo/plugins
 
 before_script:
-  - cd piwik
+  - cd matomo
   - uname -a
   - date
   - mysql -e 'create database piwik_tests;'
   - ./tests/travis/prepare.sh
   - ./tests/travis/setup_webserver.sh
-  - wget https://raw.github.com/piwik/piwik-tests-plugins/master/activateplugin.php
+  - wget https://raw.github.com/matomo-org/piwik-tests-plugins/master/activateplugin.php
   - php activateplugin.php ExamplePlugin
   - cd tests/PHPUnit
 
