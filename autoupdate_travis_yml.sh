@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script is executed before the plugin files are copied to the plugins directory and is executed on
-# the Piwik master branch.
+# the Matomo master branch.
 
 if [ "$REPO_ROOT_DIR" == "" ]; then
     if [ "$PLUGIN_NAME" != "" ]; then
