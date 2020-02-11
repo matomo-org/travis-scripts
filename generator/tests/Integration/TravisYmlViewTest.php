@@ -8,7 +8,7 @@
  */
 namespace Piwik\TravisScripts\tests\Integration;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Piwik\TravisScripts\Parser;
 use Piwik\TravisScripts\TravisYmlView;
 use Spyc;
@@ -17,7 +17,7 @@ use Spyc;
  * @group TestRunner
  * @group TestRunner_TravisYmlViewTest
  */
-class TravisYmlViewTest extends PHPUnit_Framework_TestCase
+class TravisYmlViewTest extends TestCase
 {
     public function testViewGeneratesCorrectLookingYAML()
     {
