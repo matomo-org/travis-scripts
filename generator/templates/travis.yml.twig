@@ -87,7 +87,8 @@ matrix:
   {{ existingMatrix|trim|raw }}
 {% endif %}
 
-dist: trusty
+dist: {{ useTravisDistribution|default('trusty') }}
+
 {% if generationMode == 'plugin' %}
 
 sudo: {% if useTravisContainerEnvironment|default %}false{% else %}required{% endif %}

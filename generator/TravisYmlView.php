@@ -255,6 +255,13 @@ class TravisYmlView
         $this->variables['useTravisContainerEnvironment'] = true;
     }
 
+    public function useTravisDistribution($distribution = 'xenial')
+    {
+        if (in_array($distribution, ['trusty', 'xenial', 'bionic'])) {
+            $this->variables['useTravisDistribution'] = $distribution;
+        }
+    }
+
     public function render()
     {
         return $this->twig->render('travis.yml.twig', $this->variables);
