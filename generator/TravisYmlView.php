@@ -255,11 +255,6 @@ class TravisYmlView
         $this->variables['useTravisContainerEnvironment'] = true;
     }
 
-    public function useTravisTrustyDistribution()
-    {
-        $this->variables['useTravisTrustyDistribution'] = true;
-    }
-
     public function render()
     {
         return $this->twig->render('travis.yml.twig', $this->variables);
