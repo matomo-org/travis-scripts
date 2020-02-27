@@ -1,10 +1,10 @@
 #!/bin/bash
-# NOTE: this script is executed with Piwik master checked out. After it is run, Piwik master may not be checked out.
+# NOTE: this script is executed with Matomo master checked out. After it is run, Matomo master may not be checked out.
 
 SCRIPT_DIR=`dirname $0`
 
 if [ "$TEST_AGAINST_PIWIK_BRANCH" == "" ]; then
-    if [ "$TEST_AGAINST_CORE" == "latest_stable" ]; then # test against the latest stable release of piwik core (including betas & release candidates)
+    if [ "$TEST_AGAINST_CORE" == "latest_stable" ]; then # test against the latest stable release of Matomo core (including betas & release candidates)
         # keeping latest_stable enabled until all plugins successfully migrated
         export TEST_AGAINST_PIWIK_BRANCH=$(git describe --tags `git rev-list --tags --max-count=1`)
         export TEST_AGAINST_PIWIK_BRANCH=`echo $TEST_AGAINST_PIWIK_BRANCH | tr -d ' ' | tr -d '\n'`
@@ -16,9 +16,9 @@ if [ "$TEST_AGAINST_PIWIK_BRANCH" == "" ]; then
 
         if ! git rev-parse "$TEST_AGAINST_PIWIK_BRANCH" >/dev/null 2>&1
         then
-            echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against master."
+            echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against 4.x-dev."
 
-            export TEST_AGAINST_PIWIK_BRANCH=master
+            export TEST_AGAINST_PIWIK_BRANCH=4.x-dev
         fi
     fi
 elif [[ "$TEST_AGAINST_PIWIK_BRANCH" == "maximum_supported_piwik" && "$PLUGIN_NAME" != "" ]]; then # test against the maximum supported Piwik in the plugin.json file
@@ -26,9 +26,9 @@ elif [[ "$TEST_AGAINST_PIWIK_BRANCH" == "maximum_supported_piwik" && "$PLUGIN_NA
 
     if ! git rev-parse "$TEST_AGAINST_PIWIK_BRANCH" >/dev/null 2>&1
     then
-        echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against master."
+        echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against 4.x-dev."
 
-        export TEST_AGAINST_PIWIK_BRANCH=master
+        export TEST_AGAINST_PIWIK_BRANCH=4.x-dev
     fi
 fi
 
@@ -52,11 +52,11 @@ git submodule update -q || true
 
 echo "Making sure travis-scripts submodule is being used"
 if [ ! -d ./tests/travis/.git ]; then
-    echo "Older Piwik w/o travis-scripts submodule, checking out."
+    echo "Older Matomo w/o travis-scripts submodule, checking out."
 
     rm -rf ./tests/travis
 
-    if ! git clone https://github.com/piwik/travis-scripts.git ./tests/travis; then
+    if ! git clone https://github.com/matomo-org/travis-scripts.git ./tests/travis; then
         exit 1
     fi
 fi
