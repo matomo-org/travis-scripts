@@ -61,7 +61,7 @@ then
             #       older Piwik's will end up w/ a tests:run-ui command that doesn't support it.
             # a better fix would be to decouple the piwik testing framework from piwik in a way that allowed us to
             # change code for all versions of Piwik as well as selectively for individual Piwik versions.
-            git checkout 3.x-dev ../../plugins/TestRunner/Commands/TestsRunUI.php
+            git checkout 4.x-dev ../../plugins/TestRunner/Commands/TestsRunUI.php
 
             ./../../console tests:run-ui --assume-artifacts --persist-fixture-data --plugin=$PLUGIN_NAME --extra-options="$UITEST_EXTRA_OPTIONS --screenshot-repo=$TRAVIS_REPO_SLUG"
         else

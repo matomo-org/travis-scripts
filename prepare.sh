@@ -67,13 +67,8 @@ chmod a+rw ./plugins/*/tests/System/processed || true
 chmod a+rw ./plugins/*/tests/Integration/processed || true
 
 # install phpredis
-if [[ "$TRAVIS_PHP_VERSION" == 7* ]];
-then
-    echo "Ignoring installation of Redis for PHP 7 as it is not supported by phpredis or Travis yet"
-else
-    echo 'extension="redis.so"' > ./tmp/redis.ini
-    phpenv config-add ./tmp/redis.ini
-fi;
+echo 'extension="redis.so"' > ./tmp/redis.ini
+phpenv config-add ./tmp/redis.ini
 
 #
 # php.ini config
