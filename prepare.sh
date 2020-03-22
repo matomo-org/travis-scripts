@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "$SKIP_PIWIK_TEST_PREPARE" == "1" ]; then
-    echo "Skipping Piwik specific test peparation."
+    echo "Skipping Matomo specific test peparation."
     exit 0;
 fi
 
