@@ -21,10 +21,10 @@ PHP_FPM_BIN="$HOME/.phpenv/versions/$TRAVIS_PHP_VERSION/sbin/php-fpm"
 PHP_FPM_CONF="$DIR/php-fpm.conf"
 PHP_FPM_SOCK="$DIR/php-fpm.sock"
 
-if [ -d "$TRAVIS_BUILD_DIR/../piwik/tmp/" ]; then
-    PHP_FPM_LOG="$TRAVIS_BUILD_DIR/../piwik/tmp/php-fpm.log"
-elif [ -d "$TRAVIS_BUILD_DIR/piwik/tmp/" ]; then
-    PHP_FPM_LOG="$TRAVIS_BUILD_DIR/piwik/tmp/php-fpm.log"
+if [ -d "$TRAVIS_BUILD_DIR/../matomo/tmp/" ]; then
+    PHP_FPM_LOG="$TRAVIS_BUILD_DIR/../matomo/tmp/php-fpm.log"
+elif [ -d "$TRAVIS_BUILD_DIR/matomo/tmp/" ]; then
+    PHP_FPM_LOG="$TRAVIS_BUILD_DIR/matomo/tmp/php-fpm.log"
 elif [ -d "$TRAVIS_BUILD_DIR" ]; then
     PHP_FPM_LOG="$TRAVIS_BUILD_DIR/php-fpm.log"
 else

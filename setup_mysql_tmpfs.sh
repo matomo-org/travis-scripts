@@ -9,10 +9,20 @@ if [[ "$TRAVIS_SUDO" == "true" ]]
 then
     sudo mkdir /mnt/ramdisk
     sudo mount -t tmpfs -o size=1024m tmpfs /mnt/ramdisk
-    sudo stop mysql
+    if [[ "$TRAVIS_DIST" == "bionic" ]] || [[ "$TRAVIS_DIST" == "xenial" ]]
+    then
+        sudo systemctl stop mysql
+    else
+        sudo stop mysql
+    fi
     sudo mv /var/lib/mysql /mnt/ramdisk
     sudo ln -s /mnt/ramdisk/mysql /var/lib/mysql
-    sudo start mysql
+    if [[ "$TRAVIS_DIST" == "bionic" ]] || [[ "$TRAVIS_DIST" == "xenial" ]]
+    then
+        sudo systemctl start mysql
+    else
+        sudo start mysql
+    fi
 fi
 
 # print out mysql information
