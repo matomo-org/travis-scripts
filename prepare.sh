@@ -76,3 +76,6 @@ phpenv config-add ./tmp/redis.ini
 
 # increase memory limit
 echo "memory_limit = 256M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
+# enable local infile for mysqli
+echo "mysqli.allow_local_infile = On" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
