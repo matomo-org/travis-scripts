@@ -18,6 +18,13 @@ else
         else
             git clone --depth=1 "https://$GITHUB_USER_TOKEN:@github.com/$pluginSlug" "plugins/$dependentPluginName" 2>&1 | sed "s/$GITHUB_USER_TOKEN/GITHUB_USER_TOKEN/"
         fi
+        
+        rm -rf "plugins/$dependentPluginName/tests/Integration"
+        rm -rf "plugins/$dependentPluginName/Test/Integration"
+        rm -rf "plugins/$dependentPluginName/tests/Unit"
+        rm -rf "plugins/$dependentPluginName/Test/Unit"
+        rm -rf "plugins/$dependentPluginName/tests/System"
+        rm -rf "plugins/$dependentPluginName/Test/System"
     done
 
     echo "Plugin directory:"
