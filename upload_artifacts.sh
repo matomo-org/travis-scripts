@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$TEST_SUITE" = "SystemTests" ] || [ "$TEST_SUITE" = "SystemTestsCore" ] || [ "$TEST_SUITE" = "SystemTestsPlugins" ];
+if [ "$TEST_SUITE" = "SystemTests" ] || [ "$TEST_SUITE" = "PluginTests" ] || [ "$TEST_SUITE" = "SystemTestsCore" ] || [ "$TEST_SUITE" = "SystemTestsPlugins" ];
 then
 
     echo "Uploading artifacts for $TEST_SUITE..."
@@ -10,8 +10,19 @@ then
         url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
         tar -cjf processed.tar.bz2 tests/PHPUnit/System/processed/* --exclude='.gitkeep' --transform 's/.*\///'
     else
-        url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system.plugin&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
-        tar -cjf processed.tar.bz2 plugins/*/tests/System/processed/* --exclude='.gitkeep' --transform 's/plugins\///g' --transform 's/\/tests\/System\/processed\//~~/'
+        if [ "$TEST_SUITE" = "PluginTests" ];
+        then
+            url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
+            if [ "$PROTECTED_ARTIFACTS" = "1" ];
+            then
+                echo "Artifacts will be protected (premium plugin)..."
+                url="$url&protected=1"
+            fi
+            tar -cjf processed.tar.bz2 plugins/$PLUGIN_NAME/tests/System/processed/* --exclude='.gitkeep' --transform "s/plugins\/$PLUGIN_NAME\/tests\/System\/processed\///"
+        else
+            url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system.plugin&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
+            tar -cjf processed.tar.bz2 plugins/*/tests/System/processed/* --exclude='.gitkeep' --transform 's/plugins\///g' --transform 's/\/tests\/System\/processed\//~~/'
+        fi
     fi
 
     # upload processed tarball
