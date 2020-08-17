@@ -77,10 +77,10 @@ then
             travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite UnitTests --colors $PHPUNIT_EXTRA_OPTIONS || exit_code=$?
             echo "Executing tests in test suite SystemTests for Plugins"
             travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite SystemTestsPlugins --colors $PHPUNIT_EXTRA_OPTIONS || exit_code=$?
-        elif [ "$ALLTEST_EXTRA_OPTIONS" = "--run-second-half-only" ]
-        then
             echo "Executing tests in test suite SystemTests for Core"
             travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite SystemTestsCore --colors $PHPUNIT_EXTRA_OPTIONS || exit_code=$?
+        elif [ "$ALLTEST_EXTRA_OPTIONS" = "--run-second-half-only" ]
+        then
             echo "Executing tests in test suite IntegrationTests"
             travis_wait ./../../vendor/phpunit/phpunit/phpunit --configuration phpunit.xml --testsuite IntegrationTests --colors $PHPUNIT_EXTRA_OPTIONS || exit_code=$?
         else
