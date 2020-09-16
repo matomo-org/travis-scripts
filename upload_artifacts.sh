@@ -7,12 +7,12 @@ then
 
     if [ "$TEST_SUITE" = "SystemTestsCore" ];
     then
-        url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
+        url="https://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
         tar -cjf processed.tar.bz2 tests/PHPUnit/System/processed/* --exclude='.gitkeep' --transform 's/.*\///'
     else
         if [ "$TEST_SUITE" = "PluginTests" ];
         then
-            url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
+            url="https://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
             if [ "$PROTECTED_ARTIFACTS" = "1" ];
             then
                 echo "Artifacts will be protected (premium plugin)..."
@@ -20,7 +20,7 @@ then
             fi
             tar -cjf processed.tar.bz2 plugins/$PLUGIN_NAME/tests/System/processed/* --exclude='.gitkeep' --transform "s/plugins\/$PLUGIN_NAME\/tests\/System\/processed\///"
         else
-            url="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system.plugin&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
+            url="https://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&artifact_name=system.plugin&branch=$TRAVIS_BRANCH&build_id=$TRAVIS_BUILD_NUMBER"
             tar -cjf processed.tar.bz2 plugins/*/tests/System/processed/* --exclude='.gitkeep' --transform 's/plugins\///g' --transform 's/\/tests\/System\/processed\//~~/'
         fi
     fi
@@ -30,7 +30,7 @@ then
 else
     if [ "$TEST_SUITE" = "UITests" ];
     then
-        url_base="http://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&build_id=$TRAVIS_BUILD_NUMBER&build_entity_id=$TRAVIS_BUILD_ID&branch=$TRAVIS_BRANCH"
+        url_base="https://builds-artifacts.matomo.org/build?auth_key=$ARTIFACTS_PASS&repo=$TRAVIS_REPO_SLUG&build_id=$TRAVIS_BUILD_NUMBER&build_entity_id=$TRAVIS_BUILD_ID&branch=$TRAVIS_BRANCH"
 
         if [ -n "$PLUGIN_NAME" ];
         then
