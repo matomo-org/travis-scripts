@@ -97,6 +97,22 @@ class PluginTravisYmlGenerator extends Generator
                 'env' => "TEST_SUITE=UITests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_TEST_TARGET");
         }
 
+        if ($this->isTargetPluginContainsJavaScriptTests()) {
+            $testsToRun[] = array('name' => 'JavascriptTests',
+                'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_TEST_TARGET");
+
+            $testsToRun[] = array('name' => 'JavascriptTests',
+                'vars' => "MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=\minimum_required_piwik");
+
+            $testsToExclude[] = array('description' => 'execute JS tests only w/ PHP ' . $this->minimumPhpVersion,
+                'php' => $this->minimumPhpVersion,
+                'env' => "TEST_SUITE=UITests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_PIWIK_BRANCH=\$PIWIK_TEST_TARGET");
+
+            $testsToExclude[] = array('description' => 'execute JS tests only w/ PHP ' . $this->minimumPhpVersion,
+                'php' => $this->minimumPhpVersion,
+                'env' => "TEST_SUITE=UITests MYSQL_ADAPTER=PDO_MYSQL TEST_AGAINST_CORE=\minimum_required_piwik");
+        }
+
         if (empty($testsToRun)) {
             throw new Exception("No tests to run for this plugin, aborting .travis.yml generation.");
         }
@@ -130,6 +146,13 @@ class PluginTravisYmlGenerator extends Generator
         $pluginPath = $this->getRepoRootDir();
         return $this->doesFolderContainUITests($pluginPath . "/tests")
             || $this->doesFolderContainUITests($pluginPath . "/Test");
+    }
+
+    private function isTargetPluginContainsJavaScriptTests()
+    {
+        $pluginPath = $this->getRepoRootDir();
+        return file_exists($pluginPath . "/tests/javascript/index.php")
+            || file_exists($pluginPath . "/Test/javascript/index.php");
     }
 
     private function doesFolderContainUITests($folderPath)
