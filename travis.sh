@@ -24,12 +24,12 @@ then
         ./../angularjs/scripts/travis.sh
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
     then
-
+        cd ../javascript
         if [ "$TRAVIS_SUDO" = "false" ]
         then
-            phantomjs ../javascript/testrunner.js "http://localhost:3000/tests/javascript/"
+            NODE_PATH=../lib/screenshot-testing/node_nodules node testrunner.js "http://localhost:3000/tests/javascript/"
         else
-            phantomjs ../javascript/testrunner.js "http://localhost/tests/javascript/"
+            NODE_PATH=../lib/screenshot-testing/node_nodules node testrunner.js "http://localhost/tests/javascript/"
         fi
     elif [ "$TEST_SUITE" = "UITests" ]
     then
