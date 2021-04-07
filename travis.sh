@@ -24,12 +24,15 @@ then
         ./../angularjs/scripts/travis.sh
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
     then
+        # HACK: this is a hack to get JS test jobs to run. On older versions the command for running JS tests wasn't
+        # available. So ensure we checkout the latest version of the command file to ensure it won't fail
+        git checkout 4.x-dev ../../plugins/TestRunner/Commands/TestsRunJS.php || true
 
         if [ "$TRAVIS_SUDO" = "false" ]
         then
-            phantomjs ../javascript/testrunner.js "http://localhost:3000/tests/javascript/"
+            ./../../console tests:run-js --matomo-url='http://localhost:3000'
         else
-            phantomjs ../javascript/testrunner.js "http://localhost/tests/javascript/"
+            ./../../console tests:run-js --matomo-url='http://localhost'
         fi
     elif [ "$TEST_SUITE" = "UITests" ]
     then

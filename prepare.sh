@@ -19,7 +19,7 @@ then
 fi
 
 # Install fonts for UI tests
-if [ "$TEST_SUITE" = "UITests" ];
+if [ "$TEST_SUITE" = "UITests" ] || [ "$TEST_SUITE" = "JavascriptTests" ];
 then
     mkdir $HOME/.fonts
     cp ./tests/travis/fonts/* $HOME/.fonts
