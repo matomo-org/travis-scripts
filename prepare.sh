@@ -30,7 +30,7 @@ then
 
     echo "installing node/puppeteer"
 
-    nvm install 8 && nvm use 8
+    nvm install 10 && nvm use 10
     cd ./tests/lib/screenshot-testing
     npm install
     cd $PIWIK_ROOT_DIR
