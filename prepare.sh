@@ -30,9 +30,11 @@ then
 
     echo "installing node/puppeteer"
 
+    source ~/.nvm/nvm.sh
     nvm install 10 && nvm use 10
     cd ./tests/lib/screenshot-testing
     npm install
+    node --version
     cd $PIWIK_ROOT_DIR
 fi
 
