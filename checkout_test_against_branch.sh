@@ -12,7 +12,7 @@ if [ "$TEST_AGAINST_PIWIK_BRANCH" == "" ]; then
         #echo "Testing against 'latest_stable' is no longer supported, please test against 'minimum_required_piwik'."
         #exit 1
     elif [[ "$TEST_AGAINST_CORE" == "minimum_required_piwik" && "$PLUGIN_NAME" != "" ]]; then # test against the minimum required Piwik in the plugin.json file
-        export TEST_AGAINST_PIWIK_BRANCH=$(php "$SCRIPT_DIR/get_required_piwik_version.php" $PLUGIN_NAME)
+        export TEST_AGAINST_PIWIK_BRANCH=$(php "$SCRIPT_DIR/get_required_matomo_version.php" $PLUGIN_NAME)
 
         if ! git rev-parse "$TEST_AGAINST_PIWIK_BRANCH" >/dev/null 2>&1
         then
@@ -21,8 +21,8 @@ if [ "$TEST_AGAINST_PIWIK_BRANCH" == "" ]; then
             export TEST_AGAINST_PIWIK_BRANCH=4.x-dev
         fi
     fi
-elif [[ "$TEST_AGAINST_PIWIK_BRANCH" == "maximum_supported_piwik" && "$PLUGIN_NAME" != "" ]]; then # test against the maximum supported Piwik in the plugin.json file
-    export TEST_AGAINST_PIWIK_BRANCH=$(php "$SCRIPT_DIR/get_required_piwik_version.php" $PLUGIN_NAME "max")
+elif [[ "$TEST_AGAINST_PIWIK_BRANCH" == "maximum_supported_piwik" && "$PLUGIN_NAME" != "" ]]; then # test against the maximum supported Matomo in the plugin.json file
+    export TEST_AGAINST_PIWIK_BRANCH=$(php "$SCRIPT_DIR/get_required_matomo_version.php" $PLUGIN_NAME "max")
 
     if ! git rev-parse "$TEST_AGAINST_PIWIK_BRANCH" >/dev/null 2>&1
     then

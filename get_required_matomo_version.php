@@ -11,7 +11,7 @@ $returnMaxVersion = !empty($argv[2]) && $argv[2] === 'max';
 
 // tiny script to get plugin version from plugin.json from a bash script
 require_once __DIR__ . '/../../core/Version.php';
-require_once __DIR__ . '/piwik_version_parser.php';
+require_once __DIR__ . '/matomo_version_parser.php';
 
 // at this point in travis the plugin to test against is not in the piwik directory. we could move it to piwik
 // beforehand, but for plugins that are also stored as submodules, this would erase the plugin or fail when git
@@ -20,13 +20,13 @@ $pluginJsonPath     = __DIR__ . "/../../../$pluginName/plugin.json";
 $pluginJsonContents = file_get_contents($pluginJsonPath);
 $pluginJsonContents = json_decode($pluginJsonContents, true);
 
-$requiredVersions = getRequiredPiwikVersions($pluginJsonContents);
+$requiredVersions = getRequiredMatomoVersions($pluginJsonContents);
 
 if ($returnMaxVersion) {
     $versionToReturn = getMaxVersion($requiredVersions);
 
     if (empty($versionToReturn)) {
-        $versionToReturn = trim(file_get_contents('http://api.piwik.org/LATEST_BETA'));
+        $versionToReturn = trim(file_get_contents('https://api.matomo.org/LATEST_BETA'));
     }
 } else {
     $versionToReturn = getMinVersion($requiredVersions);

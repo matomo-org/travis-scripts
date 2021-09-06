@@ -9,14 +9,16 @@
 // tiny script to get plugin version from plugin.json from a bash script
 require_once __DIR__ . '/../../core/Version.php';
 
-function getRequiredPiwikVersions($pluginJsonContents)
+function getRequiredMatomoVersions($pluginJsonContents)
 {
-    $requiredPiwikVersion = '';
+    $requiredMatomoVersion = '';
     if (isset($pluginJsonContents["require"]["piwik"])) {
-        $requiredPiwikVersion = (string) $pluginJsonContents["require"]["piwik"];
+        $requiredMatomoVersion = (string) $pluginJsonContents["require"]["piwik"];
+    } else if (isset($pluginJsonContents["require"]["matomo"])) {
+        $requiredMatomoVersion = (string) $pluginJsonContents["require"]["matomo"];
     }
 
-    $requiredVersions = explode(',', $requiredPiwikVersion);
+    $requiredVersions = explode(',', $requiredMatomoVersion);
 
     $versions = array();
     foreach ($requiredVersions as $required) {
@@ -70,13 +72,13 @@ function getMaxVersion(array $requiredVersions)
         $version    = $required['version'];
 
         if ($comparison == '<' && $version == '3.0.0-b1') {
-            $maxVersion = trim(file_get_contents('http://api.piwik.org/1.0/getLatestVersion/?release_channel=latest_2x_beta'));
+            $maxVersion = trim(file_get_contents('https://api.matomo.org/1.0/getLatestVersion/?release_channel=latest_2x_beta'));
             continue;
         } elseif ($comparison == '<' && $version == '4.0.0-b1') {
-            $maxVersion = trim(file_get_contents('http://api.piwik.org/1.0/getLatestVersion/?release_channel=latest_3x_beta'));
+            $maxVersion = trim(file_get_contents('https://api.matomo.org/1.0/getLatestVersion/?release_channel=latest_3x_beta'));
             continue;
         } elseif ($comparison == '<' && $version == '5.0.0-b1') {
-            $maxVersion = trim(file_get_contents('http://api.piwik.org/1.0/getLatestVersion/?release_channel=latest_4x_beta'));
+            $maxVersion = trim(file_get_contents('https://api.matomo.org/1.0/getLatestVersion/?release_channel=latest_4x_beta'));
             continue;
         }
 

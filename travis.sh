@@ -50,7 +50,7 @@ then
         echo -n "./console tests:sync-ui-screenshots $TRAVIS_BUILD_NUMBER"
         if [ -n "$PLUGIN_NAME" ]
         then
-            echo -n " --repository=piwik/plugin-$PLUGIN_NAME"
+            echo -n " --repository=matomo-org/plugin-$PLUGIN_NAME"
 
             if [ "$PROTECTED_ARTIFACTS" = "1" ];
             then
@@ -64,9 +64,9 @@ then
         if [ -n "$PLUGIN_NAME" ]
         then
             # HACK: this is a hack to get UI test jobs to run. the --extra-options option was added for 2.15.1, but
-            #       older Piwik's will end up w/ a tests:run-ui command that doesn't support it.
-            # a better fix would be to decouple the piwik testing framework from piwik in a way that allowed us to
-            # change code for all versions of Piwik as well as selectively for individual Piwik versions.
+            #       older Matomo's will end up w/ a tests:run-ui command that doesn't support it.
+            # a better fix would be to decouple the Matomo testing framework from Matomo in a way that allowed us to
+            # change code for all versions of Matomo as well as selectively for individual Matomo versions.
             git checkout 4.x-dev ../../plugins/TestRunner/Commands/TestsRunUI.php
 
             ./../../console tests:run-ui --assume-artifacts --persist-fixture-data --plugin=$PLUGIN_NAME --extra-options="$UITEST_EXTRA_OPTIONS --screenshot-repo=$TRAVIS_REPO_SLUG"

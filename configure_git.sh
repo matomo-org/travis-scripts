@@ -1,11 +1,11 @@
 #!/bin/bash
 
 if [ "$TRAVIS_COMMITTER_EMAIL" == "" ]; then
-    TRAVIS_COMMITTER_EMAIL="hello@piwik.org"
+    TRAVIS_COMMITTER_EMAIL="hello@matomo.org"
 fi
 
 if [ "$TRAVIS_COMMITTER_NAME" == "" ]; then
-    TRAVIS_COMMITTER_NAME="Piwik Automation"
+    TRAVIS_COMMITTER_NAME="Matomo Automation"
 fi
 
 echo "Configuring git [email = $TRAVIS_COMMITTER_EMAIL, user = $TRAVIS_COMMITTER_NAME]..."

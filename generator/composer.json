@@ -1,5 +1,5 @@
 {
-    "name": "piwik/travis-yml-generator",
+    "name": "matomo/travis-yml-generator",
     "require": {
         "twig/twig": "^1.18",
         "symfony/console": "~2.6"
@@ -11,8 +11,8 @@
     },
     "authors": [
         {
-            "name": "Piwik",
-            "email": "hello@piwik.org"
+            "name": "Matomo",
+            "email": "hello@matomo.org"
         }
     ]
 }

@@ -18,8 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Exception;
 
 /**
- * Command to generate an self-updating .travis.yml file either for Piwik Core or
- * an individual Piwik plugin.
+ * Command to generate an self-updating .travis.yml file either for Matomo Core or
+ * an individual Matomo plugin.
  */
 class GenerateTravisYmlFile extends Command
 {
@@ -30,12 +30,12 @@ class GenerateTravisYmlFile extends Command
         $this->setName(self::COMMAND_NAME)
             ->setDescription('Generates a .travis.yml file for a plugin. The file can be auto-updating based on the parameters supplied.')
             ->addOption('plugin', null, InputOption::VALUE_REQUIRED, 'The plugin for whom a .travis.yml file should be generated.')
-            ->addOption('core', null, InputOption::VALUE_NONE, 'Supplied when generating the .travis.yml file for Piwik core.'
+            ->addOption('core', null, InputOption::VALUE_NONE, 'Supplied when generating the .travis.yml file for Matomo core.'
                 . ' Should only be used by core developers.')
             ->addOption('piwik-tests-plugins', null, InputOption::VALUE_REQUIRED, 'Supplied when generating the .travis.yml file for the '
                 . 'piwik-tests-plugins repository. Should only be used by core developers.')
             ->addOption('artifacts-pass', null, InputOption::VALUE_REQUIRED,
-                "Password to the Piwik build artifacts server. Will be encrypted in the .travis.yml file.")
+                "Password to the Matomo build artifacts server. Will be encrypted in the .travis.yml file.")
             ->addOption('github-token', null, InputOption::VALUE_REQUIRED,
                 "Github token of a user w/ push access to this repository. Used to auto-commit updates to the "
                 . ".travis.yml file and checkout dependencies. Will be encrypted in the .travis.yml file.\n\n"
