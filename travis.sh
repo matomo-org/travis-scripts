@@ -50,7 +50,7 @@ then
         echo -n "./console tests:sync-ui-screenshots $TRAVIS_BUILD_NUMBER"
         if [ -n "$PLUGIN_NAME" ]
         then
-            echo -n " --repository=matomo-org/plugin-$PLUGIN_NAME"
+            echo -n " --repository=$TRAVIS_REPO_SLUG"
 
             if [ "$PROTECTED_ARTIFACTS" = "1" ];
             then
