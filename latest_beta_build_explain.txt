@@ -8,9 +8,9 @@ supported version in plugin.json is specified.
 If you want to run this build against a fixed Matomo version, specifiy either a
 maximum supported Matomo version in plugin.json like this:
 
-'require": { "piwik": ">=2.15.0-rc1,<=2.15.0-rc1" },'
+'require": { "matomo": ">=2.15.0-rc1,<=2.15.0-rc1" },'
 
-or specify a specifc "PIWIK_TEST_TARGET" Matomo version in your ".travis.yml".
+or specify a specific "PIWIK_TEST_TARGET" Matomo version in your ".travis.yml".
 
 
 Why is this important?
@@ -31,7 +31,7 @@ What to do when this build fails?
 * Make your plugin compatible with the latest Matomo version
 * If you cannot make your plugin compatible with the latest Matomo version,
   specify a maximum supported Matomo version in your plugin.json file like this:
-  '"require": { "piwik": ">=2.15.0-rc1,<=2.15.0-rc1" },'
+  '"require": { "matomo": ">=2.15.0-rc1,<=2.15.0-rc1" },'
 * If you need any help with this contact the Matomo core team
 
 ******************************************************************************

@@ -7,7 +7,7 @@
  */
 
 require_once __DIR__ . '/../../core/Version.php';
-require_once __DIR__ . '/piwik_version_parser.php';
+require_once __DIR__ . '/matomo_version_parser.php';
 
 $pluginName = $argv[1];
 
@@ -19,7 +19,7 @@ $pluginJsonPath = __DIR__ . "/../../../$pluginName/plugin.json";
 $pluginJsonContents = file_get_contents($pluginJsonPath);
 $pluginJsonContents = json_decode($pluginJsonContents, true);
 
-$requiredVersions = getRequiredPiwikVersions($pluginJsonContents);
+$requiredVersions = getRequiredMatomoVersions($pluginJsonContents);
 
 foreach ($requiredVersions as $requiredVersion) {
     $comparison = $requiredVersion['comparison'];
