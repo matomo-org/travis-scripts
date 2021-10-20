@@ -26,7 +26,7 @@ then
     fi
 
     # upload processed tarball
-    curl --insecure -X POST --data-binary @processed.tar.bz2 "$url"
+    curl -X POST --data-binary @processed.tar.bz2 "$url"
 else
     if [ "$TEST_SUITE" = "UITests" ];
     then
@@ -61,7 +61,7 @@ else
 
         # upload processed tarball
         tar -cjf processed-ui-screenshots.tar.bz2 processed-ui-screenshots --exclude='.gitkeep'
-        curl --insecure -X POST --data-binary @processed-ui-screenshots.tar.bz2 "$url_base&artifact_name=processed-screenshots"
+        curl -X POST --data-binary @processed-ui-screenshots.tar.bz2 "$url_base&artifact_name=processed-screenshots"
 
         # upload diff tarball if it exists
         cd $base_dir/tests/UI
@@ -76,7 +76,7 @@ else
             ls screenshot-diffs
 
             tar -cjf screenshot-diffs.tar.bz2 screenshot-diffs
-            curl --insecure -X POST --data-binary @screenshot-diffs.tar.bz2 "$url_base&artifact_name=screenshot-diffs"
+            curl -X POST --data-binary @screenshot-diffs.tar.bz2 "$url_base&artifact_name=screenshot-diffs"
         fi
     else
         echo "No artifacts for $TEST_SUITE tests."
