@@ -24,6 +24,10 @@ then
 
     if [ "$TEST_SUITE" = "AngularJSTests" ]
     then
+        ./../../console development:enable
+        ./../../console vue:build
+        ./../../console development:disable
+
         ./../angularjs/scripts/travis.sh
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
     then
