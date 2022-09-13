@@ -14,7 +14,7 @@ namespace Symfony\Component\Console\Tests\Fixtures;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
- * Dummy output
+ * Dummy output.
  *
  * @author Kévin Dunglas <dunglas@gmail.com>
  */
@@ -26,7 +26,7 @@ class DummyOutput extends BufferedOutput
     public function getLogs()
     {
         $logs = array();
-        foreach (explode("\n", trim($this->fetch())) as $message) {
+        foreach (explode(PHP_EOL, trim($this->fetch())) as $message) {
             preg_match('/^\[(.*)\] (.*)/', $message, $matches);
             $logs[] = sprintf('%s %s', $matches[1], $matches[2]);
         }

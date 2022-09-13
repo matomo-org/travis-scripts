@@ -25,33 +25,26 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
  *     $output = new StreamOutput(fopen('php://stdout', 'w'));
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @api
  */
 class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
 {
-    /**
-     * @var StreamOutput
-     */
     private $stderr;
 
     /**
-     * Constructor.
-     *
      * @param int                           $verbosity The verbosity level (one of the VERBOSITY constants in OutputInterface)
      * @param bool|null                     $decorated Whether to decorate messages (null for auto-guessing)
      * @param OutputFormatterInterface|null $formatter Output formatter instance (null to use default OutputFormatter)
-     *
-     * @api
      */
     public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = null, OutputFormatterInterface $formatter = null)
     {
-        $outputStream = $this->hasStdoutSupport() ? 'php://stdout' : 'php://output';
-        $errorStream = $this->hasStderrSupport() ? 'php://stderr' : 'php://output';
+        parent::__construct($this->openOutputStream(), $verbosity, $decorated, $formatter);
 
-        parent::__construct(fopen($outputStream, 'w'), $verbosity, $decorated, $formatter);
+        $actualDecorated = $this->isDecorated();
+        $this->stderr = new StreamOutput($this->openErrorStream(), $verbosity, $decorated, $this->getFormatter());
 
-        $this->stderr = new StreamOutput(fopen($errorStream, 'w'), $verbosity, $decorated, $this->getFormatter());
+        if (null === $decorated) {
+            $this->setDecorated($actualDecorated && $this->stderr->isDecorated());
+        }
     }
 
     /**
@@ -127,6 +120,32 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
      */
     private function isRunningOS400()
     {
-        return 'OS400' === php_uname('s');
+        $checks = array(
+            \function_exists('php_uname') ? php_uname('s') : '',
+            getenv('OSTYPE'),
+            PHP_OS,
+        );
+
+        return false !== stripos(implode(';', $checks), 'OS400');
+    }
+
+    /**
+     * @return resource
+     */
+    private function openOutputStream()
+    {
+        $outputStream = $this->hasStdoutSupport() ? 'php://stdout' : 'php://output';
+
+        return @fopen($outputStream, 'w') ?: fopen('php://output', 'w');
+    }
+
+    /**
+     * @return resource
+     */
+    private function openErrorStream()
+    {
+        $errorStream = $this->hasStderrSupport() ? 'php://stderr' : 'php://output';
+
+        return fopen($errorStream, 'w');
     }
 }

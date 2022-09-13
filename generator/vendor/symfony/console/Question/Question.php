@@ -11,6 +11,9 @@
 
 namespace Symfony\Component\Console\Question;
 
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Exception\LogicException;
+
 /**
  * Represents a Question.
  *
@@ -28,8 +31,6 @@ class Question
     private $normalizer;
 
     /**
-     * Constructor.
-     *
      * @param string $question The question to ask to the user
      * @param mixed  $default  The default answer to return if the user enters nothing
      */
@@ -74,14 +75,14 @@ class Question
      *
      * @param bool $hidden
      *
-     * @return Question The current instance
+     * @return $this
      *
-     * @throws \LogicException In case the autocompleter is also used
+     * @throws LogicException In case the autocompleter is also used
      */
     public function setHidden($hidden)
     {
         if ($this->autocompleterValues) {
-            throw new \LogicException('A hidden question cannot use the autocompleter.');
+            throw new LogicException('A hidden question cannot use the autocompleter.');
         }
 
         $this->hidden = (bool) $hidden;
@@ -104,7 +105,7 @@ class Question
      *
      * @param bool $fallback
      *
-     * @return Question The current instance
+     * @return $this
      */
     public function setHiddenFallback($fallback)
     {
@@ -116,7 +117,7 @@ class Question
     /**
      * Gets values for the autocompleter.
      *
-     * @return null|array|\Traversable
+     * @return iterable|null
      */
     public function getAutocompleterValues()
     {
@@ -126,27 +127,25 @@ class Question
     /**
      * Sets values for the autocompleter.
      *
-     * @param null|array|\Traversable $values
+     * @param iterable|null $values
      *
-     * @return Question The current instance
+     * @return $this
      *
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
+     * @throws InvalidArgumentException
+     * @throws LogicException
      */
     public function setAutocompleterValues($values)
     {
-        if (is_array($values) && $this->isAssoc($values)) {
-            $values = array_merge(array_keys($values), array_values($values));
+        if (\is_array($values)) {
+            $values = $this->isAssoc($values) ? array_merge(array_keys($values), array_values($values)) : array_values($values);
         }
 
-        if (null !== $values && !is_array($values)) {
-            if (!$values instanceof \Traversable || $values instanceof \Countable) {
-                throw new \InvalidArgumentException('Autocompleter values can be either an array, `null` or an object implementing both `Countable` and `Traversable` interfaces.');
-            }
+        if (null !== $values && !\is_array($values) && !$values instanceof \Traversable) {
+            throw new InvalidArgumentException('Autocompleter values can be either an array, `null` or a `Traversable` object.');
         }
 
         if ($this->hidden) {
-            throw new \LogicException('A hidden question cannot use the autocompleter.');
+            throw new LogicException('A hidden question cannot use the autocompleter.');
         }
 
         $this->autocompleterValues = $values;
@@ -157,9 +156,9 @@ class Question
     /**
      * Sets a validator for the question.
      *
-     * @param null|callable $validator
+     * @param callable|null $validator
      *
-     * @return Question The current instance
+     * @return $this
      */
     public function setValidator($validator)
     {
@@ -171,7 +170,7 @@ class Question
     /**
      * Gets the validator for the question.
      *
-     * @return null|callable
+     * @return callable|null
      */
     public function getValidator()
     {
@@ -183,16 +182,16 @@ class Question
      *
      * Null means an unlimited number of attempts.
      *
-     * @param null|int $attempts
+     * @param int|null $attempts
      *
-     * @return Question The current instance
+     * @return $this
      *
-     * @throws \InvalidArgumentException In case the number of attempts is invalid.
+     * @throws InvalidArgumentException in case the number of attempts is invalid
      */
     public function setMaxAttempts($attempts)
     {
         if (null !== $attempts && $attempts < 1) {
-            throw new \InvalidArgumentException('Maximum number of attempts must be a positive value.');
+            throw new InvalidArgumentException('Maximum number of attempts must be a positive value.');
         }
 
         $this->attempts = $attempts;
@@ -205,7 +204,7 @@ class Question
      *
      * Null means an unlimited number of attempts.
      *
-     * @return null|int
+     * @return int|null
      */
     public function getMaxAttempts()
     {
@@ -217,9 +216,9 @@ class Question
      *
      * The normalizer can be a callable (a string), a closure or a class implementing __invoke.
      *
-     * @param string|\Closure $normalizer
+     * @param callable $normalizer
      *
-     * @return Question The current instance
+     * @return $this
      */
     public function setNormalizer($normalizer)
     {
@@ -233,7 +232,7 @@ class Question
      *
      * The normalizer can ba a callable (a string), a closure or a class implementing __invoke.
      *
-     * @return string|\Closure
+     * @return callable
      */
     public function getNormalizer()
     {
@@ -242,6 +241,6 @@ class Question
 
     protected function isAssoc($array)
     {
-        return (bool) count(array_filter(array_keys($array), 'is_string'));
+        return (bool) \count(array_filter(array_keys($array), 'is_string'));
     }
 }

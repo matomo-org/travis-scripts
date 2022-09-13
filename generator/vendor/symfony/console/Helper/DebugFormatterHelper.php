@@ -25,7 +25,7 @@ class DebugFormatterHelper extends Helper
     private $count = -1;
 
     /**
-     * Starts a debug formatting session
+     * Starts a debug formatting session.
      *
      * @param string $id      The id of the formatting session
      * @param string $message The message to display
@@ -35,13 +35,13 @@ class DebugFormatterHelper extends Helper
      */
     public function start($id, $message, $prefix = 'RUN')
     {
-        $this->started[$id] = array('border' => ++$this->count % count($this->colors));
+        $this->started[$id] = array('border' => ++$this->count % \count($this->colors));
 
         return sprintf("%s<bg=blue;fg=white> %s </> <fg=blue>%s</>\n", $this->getBorder($id), $prefix, $message);
     }
 
     /**
-     * Adds progress to a formatting session
+     * Adds progress to a formatting session.
      *
      * @param string $id          The id of the formatting session
      * @param string $buffer      The message to display
@@ -61,7 +61,7 @@ class DebugFormatterHelper extends Helper
                 unset($this->started[$id]['out']);
             }
             if (!isset($this->started[$id]['err'])) {
-                $message .= sprintf("%s<bg=red;fg=white> %s </> ", $this->getBorder($id), $errorPrefix);
+                $message .= sprintf('%s<bg=red;fg=white> %s </> ', $this->getBorder($id), $errorPrefix);
                 $this->started[$id]['err'] = true;
             }
 
@@ -72,7 +72,7 @@ class DebugFormatterHelper extends Helper
                 unset($this->started[$id]['err']);
             }
             if (!isset($this->started[$id]['out'])) {
-                $message .= sprintf("%s<bg=green;fg=white> %s </> ", $this->getBorder($id), $prefix);
+                $message .= sprintf('%s<bg=green;fg=white> %s </> ', $this->getBorder($id), $prefix);
                 $this->started[$id]['out'] = true;
             }
 
@@ -83,7 +83,7 @@ class DebugFormatterHelper extends Helper
     }
 
     /**
-     * Stops a formatting session
+     * Stops a formatting session.
      *
      * @param string $id         The id of the formatting session
      * @param string $message    The message to display

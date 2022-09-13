@@ -11,12 +11,13 @@
 
 namespace Symfony\Component\Console\Tests\Input;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 
-class InputTest extends \PHPUnit_Framework_TestCase
+class InputTest extends TestCase
 {
     public function testConstructor()
     {
@@ -94,12 +95,23 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException        \RuntimeException
-     * @expectedExceptionMessage Not enough arguments.
+     * @expectedExceptionMessage Not enough arguments (missing: "name").
      */
     public function testValidateWithMissingArguments()
     {
         $input = new ArrayInput(array());
         $input->bind(new InputDefinition(array(new InputArgument('name', InputArgument::REQUIRED))));
+        $input->validate();
+    }
+
+    /**
+     * @expectedException        \RuntimeException
+     * @expectedExceptionMessage Not enough arguments (missing: "name").
+     */
+    public function testValidateWithMissingRequiredArguments()
+    {
+        $input = new ArrayInput(array('bar' => 'baz'));
+        $input->bind(new InputDefinition(array(new InputArgument('name', InputArgument::REQUIRED), new InputArgument('bar', InputArgument::OPTIONAL))));
         $input->validate();
     }
 

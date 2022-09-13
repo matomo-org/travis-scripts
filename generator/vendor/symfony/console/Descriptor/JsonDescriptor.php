@@ -81,9 +81,6 @@ class JsonDescriptor extends Descriptor
     /**
      * Writes data as json.
      *
-     * @param array $data
-     * @param array $options
-     *
      * @return array|string
      */
     private function writeData(array $data, array $options)
@@ -92,8 +89,6 @@ class JsonDescriptor extends Descriptor
     }
 
     /**
-     * @param InputArgument $argument
-     *
      * @return array
      */
     private function getInputArgumentData(InputArgument $argument)
@@ -102,32 +97,28 @@ class JsonDescriptor extends Descriptor
             'name' => $argument->getName(),
             'is_required' => $argument->isRequired(),
             'is_array' => $argument->isArray(),
-            'description' => preg_replace('/\s*\R\s*/', ' ', $argument->getDescription()),
-            'default' => $argument->getDefault(),
+            'description' => preg_replace('/\s*[\r\n]\s*/', ' ', $argument->getDescription()),
+            'default' => INF === $argument->getDefault() ? 'INF' : $argument->getDefault(),
         );
     }
 
     /**
-     * @param InputOption $option
-     *
      * @return array
      */
     private function getInputOptionData(InputOption $option)
     {
         return array(
             'name' => '--'.$option->getName(),
-            'shortcut' => $option->getShortcut() ? '-'.implode('|-', explode('|', $option->getShortcut())) : '',
+            'shortcut' => $option->getShortcut() ? '-'.str_replace('|', '|-', $option->getShortcut()) : '',
             'accept_value' => $option->acceptValue(),
             'is_value_required' => $option->isValueRequired(),
             'is_multiple' => $option->isArray(),
-            'description' => preg_replace('/\s*\R\s*/', ' ', $option->getDescription()),
-            'default' => $option->getDefault(),
+            'description' => preg_replace('/\s*[\r\n]\s*/', ' ', $option->getDescription()),
+            'default' => INF === $option->getDefault() ? 'INF' : $option->getDefault(),
         );
     }
 
     /**
-     * @param InputDefinition $definition
-     *
      * @return array
      */
     private function getInputDefinitionData(InputDefinition $definition)
@@ -146,8 +137,6 @@ class JsonDescriptor extends Descriptor
     }
 
     /**
-     * @param Command $command
-     *
      * @return array
      */
     private function getCommandData(Command $command)
