@@ -22,9 +22,9 @@ then
         echo "    [ plugin name = $PLUGIN_NAME ]"
     fi
 
-    if [ "$TEST_SUITE" = "AngularJSTests" ]
+    if [ "$TEST_SUITE" = "ClientTests" ]
     then
-        ./../angularjs/scripts/travis.sh
+        ./../client/scripts/travis.sh
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
     then
         # HACK: this is a hack to get JS test jobs to run. On older versions the command for running JS tests wasn't
