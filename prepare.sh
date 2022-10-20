@@ -88,3 +88,7 @@ echo "memory_limit = 256M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.
 
 # enable local infile for mysqli
 echo "mysqli.allow_local_infile = On" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
+# add allow plugin in composer, in case fail in travis
+travis_retry composer clear-cache
+composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
