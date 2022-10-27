@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$SKIP_PIWIK_TEST_PREPARE" == "1" ] || [ "$TEST_SUITE" == "AngularJSTests" ] || [ "$TEST_SUITE" == "UnitTests" ] || [ "$TEST_SUITE" == "JavascriptTests" ]; then
+if [ "$SKIP_PIWIK_TEST_PREPARE" == "1" ] || [ "$TEST_SUITE" == "AngularJSTests" ] || [ "$TEST_SUITE" == "ClientTests" ] || [ "$TEST_SUITE" == "UnitTests" ] || [ "$TEST_SUITE" == "JavascriptTests" ]; then
     echo "Skipping mysql setup."
     exit 0;
 fi

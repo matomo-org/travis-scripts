@@ -22,7 +22,10 @@ then
         echo "    [ plugin name = $PLUGIN_NAME ]"
     fi
 
-    if [ "$TEST_SUITE" = "AngularJSTests" ]
+    if [ "$TEST_SUITE" = "ClientTests" ]
+    then
+        ./../client/scripts/travis.sh
+    elif [ "$TEST_SUITE" = "AngularJSTests" ]
     then
         ./../angularjs/scripts/travis.sh
     elif [ "$TEST_SUITE" = "JavascriptTests" ]
