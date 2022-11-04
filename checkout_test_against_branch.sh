@@ -16,9 +16,16 @@ if [ "$TEST_AGAINST_PIWIK_BRANCH" == "" ]; then
 
         if ! git rev-parse "$TEST_AGAINST_PIWIK_BRANCH" >/dev/null 2>&1
         then
-            echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against 4.x-dev."
+            if ! git rev-parse "${TEST_AGAINST_PIWIK_BRANCH:0:1}.x-dev" >/dev/null 2>&1
+            then
+                echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against 4.x-dev."
 
-            export TEST_AGAINST_PIWIK_BRANCH=4.x-dev
+                export TEST_AGAINST_PIWIK_BRANCH=4.x-dev
+            else
+                echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against ${TEST_AGAINST_PIWIK_BRANCH:0:1}.x-dev."
+
+                export TEST_AGAINST_PIWIK_BRANCH=${TEST_AGAINST_PIWIK_BRANCH:0:1}.x-dev
+            fi
         fi
     fi
 elif [[ "$TEST_AGAINST_PIWIK_BRANCH" == "maximum_supported_piwik" && "$PLUGIN_NAME" != "" ]]; then # test against the maximum supported Matomo in the plugin.json file
@@ -26,9 +33,16 @@ elif [[ "$TEST_AGAINST_PIWIK_BRANCH" == "maximum_supported_piwik" && "$PLUGIN_NA
 
     if ! git rev-parse "$TEST_AGAINST_PIWIK_BRANCH" >/dev/null 2>&1
     then
-        echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against 4.x-dev."
+        if ! git rev-parse "${TEST_AGAINST_PIWIK_BRANCH:0:1}.x-dev" >/dev/null 2>&1
+        then
+            echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against 4.x-dev."
 
-        export TEST_AGAINST_PIWIK_BRANCH=4.x-dev
+            export TEST_AGAINST_PIWIK_BRANCH=4.x-dev
+        else
+            echo "Could not find tag '$TEST_AGAINST_PIWIK_BRANCH' specified in plugin.json, testing against ${TEST_AGAINST_PIWIK_BRANCH:0:1}.x-dev."
+
+            export TEST_AGAINST_PIWIK_BRANCH=${TEST_AGAINST_PIWIK_BRANCH:0:1}.x-dev
+        fi
     fi
 fi
 
