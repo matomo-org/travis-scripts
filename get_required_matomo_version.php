@@ -33,7 +33,9 @@ if ($returnMaxVersion) {
 }
 
 if (empty($versionToReturn)) {
-    $versionToReturn = "master";
+    $requiredVersions = getRequiredMatomoVersions($pluginJsonContents, true);
+    $versionToReturn = getMinVersion($requiredVersions);
+    $versionToReturn = !empty($versionToReturn) ? $versionToReturn : '4.x-dev';
 }
 
 echo $versionToReturn;

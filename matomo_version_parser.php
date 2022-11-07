@@ -9,7 +9,7 @@
 // tiny script to get plugin version from plugin.json from a bash script
 require_once __DIR__ . '/../../core/Version.php';
 
-function getRequiredMatomoVersions($pluginJsonContents)
+function getRequiredMatomoVersions($pluginJsonContents, $returnAlsoInvalid = false)
 {
     $requiredMatomoVersion = '';
     if (isset($pluginJsonContents["require"]["piwik"])) {
@@ -26,10 +26,12 @@ function getRequiredMatomoVersions($pluginJsonContents)
             $comparison = trim($matches[1]);
             $version = $matches[2];
 
-            if (!preg_match("/^[^0-9]*(.*)/", $version)
-                || empty($version)
-                || version_compare($version, \Piwik\Version::VERSION) > 0) {
+            if (!preg_match("/^[^0-9]*(.*)/", $version) || empty($version)) {
                 // not a valid version number
+                continue;
+            }
+
+            if (!$returnAlsoInvalid && version_compare($version, \Piwik\Version::VERSION) > 0) {
                 continue;
             }
 
