@@ -80,6 +80,9 @@ function getMaxVersion(array $requiredVersions)
         } elseif ($comparison == '<' && $version == '5.0.0-b1') {
             $maxVersion = trim(file_get_contents('https://api.matomo.org/1.0/getLatestVersion/?release_channel=latest_4x_beta'));
             continue;
+        } elseif ($comparison == '<' && $version == '6.0.0-b1') {
+            $maxVersion = trim(file_get_contents('https://api.matomo.org/1.0/getLatestVersion/?release_channel=latest_5x_beta'));
+            continue;
         }
 
         if (in_array($comparison, array('<', '<=', '=='))) {
