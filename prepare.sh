@@ -6,18 +6,6 @@ fi
 
 set -e
 
-# Install woff2 if not already present
-if [ ! -d "travis_woff2/src" ];
-then
-    echo "installing woff2..."
-
-    rm -rf ../travis_woff2
-    git clone --recursive https://github.com/google/woff2.git ../travis_woff2
-    cd ../travis_woff2
-    make clean all
-    cd ../matomo
-fi
-
 # Install fonts for UI tests
 if [ "$TEST_SUITE" = "UITests" ] || [ "$TEST_SUITE" = "JavascriptTests" ];
 then
