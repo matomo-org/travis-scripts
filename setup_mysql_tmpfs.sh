@@ -7,6 +7,8 @@ fi
 
 if [[ "$TRAVIS_SUDO" == "true" ]]
 then
+    sudo apt-get install -y php"$PHP_VERSION"-gd
+
     sudo mkdir /mnt/ramdisk
     sudo mount -t tmpfs -o size=1024m tmpfs /mnt/ramdisk
     if [[ "$TRAVIS_DIST" == "bionic" ]] || [[ "$TRAVIS_DIST" == "xenial" ]]
