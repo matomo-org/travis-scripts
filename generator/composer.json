@@ -1,7 +1,7 @@
 {
     "name": "matomo/travis-yml-generator",
     "require": {
-        "twig/twig": "^1.18",
+        "twig/twig": "^3.11",
         "symfony/console": "~2.6"
     },
     "autoload": {
